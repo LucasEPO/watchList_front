@@ -19,7 +19,7 @@ const LoginForm = ({ onSubmit, hasError }: LoginFormProps) => {
   return (
     <form onSubmit={handleSubmit}>
         <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="login">
+            <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="login">
               Login
             </label>
             <input
@@ -28,12 +28,12 @@ const LoginForm = ({ onSubmit, hasError }: LoginFormProps) => {
               value={login}
               onChange={(event) => setLogin(event.target.value)}
               placeholder="Login da Empresa"
-              className={`w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${hasError? 'outline outline-red-600' : ''}`}
+              className={`w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 ${hasError? 'outline outline-red-600' : ''}`}
               required
             />
         </div>
         <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="password">
               Senha
             </label>
             <input
@@ -41,21 +41,21 @@ const LoginForm = ({ onSubmit, hasError }: LoginFormProps) => {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="Digite sua senha"
-              className={`w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${hasError? 'outline outline-red-600' : ''}`}
+              placeholder="Digite senha"
+              className={`w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 ${hasError? 'outline outline-red-600' : ''}`}
               required
             />
         </div>
         <div className="flex flex-col items-center">
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+              className="w-full bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"
             >
               Login
             </button>
             <button
               type="button"
-              className="mt-4 text-blue-500 hover:underline"
+              className="mt-4 text-orange-500 hover:underline"
             >
               Criar uma conta
             </button>

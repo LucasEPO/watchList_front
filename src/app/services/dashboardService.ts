@@ -16,7 +16,7 @@ const dashboardService = {
             return response.data;
         } catch (error) {
             console.error('Erro ao buscar relatórios:', error);
-            return [];
+            return;
         }
     },
 
