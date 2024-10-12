@@ -7,14 +7,15 @@ const authService = {
         login,
         password
       });
-
+      const token = response.data.access_token;
+      const empresa_id = response.data.empresa_id;
+      
       if (!response.data.access_token) {
         throw new Error(`Falha no login código ${response.status}: ${response.statusText}`);
       }
 
-      const token = response.data.access_token;
-
-      localStorage.setItem("access_token", token);
+      sessionStorage.setItem("access_token", token);
+      sessionStorage.setItem("empresa_id", empresa_id);
 
       return token;
     } catch (error) {

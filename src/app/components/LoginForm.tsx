@@ -4,9 +4,10 @@ import React, { FormEvent, useState } from 'react';
 
 interface LoginFormProps {
   onSubmit: (data: { login: string; password: string }) => void;
+  hasError: boolean;
 }
 
-const LoginForm = ({ onSubmit }: LoginFormProps) => {
+const LoginForm = ({ onSubmit, hasError }: LoginFormProps) => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
@@ -27,7 +28,7 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
               value={login}
               onChange={(event) => setLogin(event.target.value)}
               placeholder="Login da Empresa"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${hasError? 'outline outline-red-600' : ''}`}
               required
             />
         </div>
@@ -41,7 +42,7 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Digite sua senha"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className={`w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 ${hasError? 'outline outline-red-600' : ''}`}
               required
             />
         </div>
