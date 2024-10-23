@@ -2,33 +2,70 @@
 
 import ExpansiveButton from '@/app/components/ExpansiveButton';
 import { FiSettings } from 'react-icons/fi';
-import { useTableData, tableHeaders, columnWidths, refreshTableData, updateCheckboxRelatorio, deleteRelatorio } from '@/app/controllers/DashboardController';
+import DashboardController from '@/app/controllers/DashboardController';
 import Table from '@/app/components/Table';
+import RelatorioModal from '@/app/components/RelatorioModal';
 
 
 export default function Dashboard() {
-  const { tableData, dataLength, loading, error, setTableData, setLoading, setError } = useTableData();
+  const {
+    modal,
+    relatorio,
+    tableHeaders,
+    columnWidths,
+    useTableData,
+    refreshTableData,
+    deleteRelatorio,
+    toggleModal,
+    updateCheckboxRelatorio,
+    updateRelatorio,
+  } = DashboardController();
+
+  const { 
+    tableData, 
+    dataLength, 
+    loading, 
+    error, 
+    setTableData, 
+    setLoading, 
+    setError, 
+    setDataLength
+  } = useTableData();
 
   const handleRefresh = () => {
-    refreshTableData(setTableData, setLoading, setError);
+      refreshTableData(setTableData, setLoading, setError, setDataLength);
   };
 
   const handleUpdateCheckBox = async (id: number, field: string, value: boolean) => {
-    const response = await updateCheckboxRelatorio(id, field, value);
-    if (response.data) {
-      setTableData((prevData) =>
-        prevData.map((item) => 
-          item.id === id ? { ...item, [field]: value } : item
-        )
-      );
-    }
+      const response = await updateCheckboxRelatorio(id, field, value);
+      if (response.data) {
+          setTableData((prevData) =>
+              prevData.map((item) => 
+                  item.id === id ? { ...item, [field]: value } : item
+              )
+          );
+      }
   };
 
   const handleDelete = async (id: number) => {
-    const response = await deleteRelatorio(id);
-    if (response.status === 200) 
-      setTableData((prevData) => prevData.filter((item) => item.id !== id));
-    
+      const response = await deleteRelatorio(id);
+          if (response.status === 200) 
+              setTableData((prevData) => prevData.filter((item) => item.id !== id));
+  };
+
+  const handleUpdateRow = async (id: number, updates: object) => {
+    try {
+        const response = await updateRelatorio(id, updates);
+        if (response.data) {
+            setTableData((prevData) =>
+                prevData.map((item) =>
+                    item.id === id ? { ...item, ...updates } : item
+                )
+            );
+        }
+    } catch (error) {
+        console.error("Erro ao pegar a linha atualizada:", error);
+    }
   };
 
   return (
@@ -53,8 +90,10 @@ export default function Dashboard() {
           onRefresh={handleRefresh}
           onCheckboxChange={handleUpdateCheckBox}
           onDelete={handleDelete}
+          onEdit={handleUpdateRow}
+          onToggleModal={toggleModal}
         />
-
+        <RelatorioModal isOpen={modal} onClose={toggleModal} handleRefresh={handleRefresh} relatorio={relatorio} />
       </main>
     </div>
   );

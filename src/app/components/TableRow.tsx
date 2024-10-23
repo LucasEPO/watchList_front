@@ -2,6 +2,8 @@ import moment from 'moment';
 import Checkbox from '@mui/material/Checkbox';
 import { FiEdit, FiEye, FiTrash } from 'react-icons/fi';
 import { HiOutlineStar, HiStar } from 'react-icons/hi2';
+import dashboardService from '../services/dashboardService';
+import { Relatorio } from '../models/relatorio.interface';
 
 interface RelatorioItem {
     id: number;
@@ -19,6 +21,8 @@ type TableRowProps = {
     columnWidths: string[];
     onCheckboxChange: (id: number, field: string, value: boolean) => Promise<void>;
     onDelete: (id: number) => Promise<void>;
+    onEdit: (id: number, updates: object) => Promise<void>; 
+    onToggleModal: (relatorio: Relatorio) => void; 
 };
 
 interface Column<T> {
@@ -27,7 +31,7 @@ interface Column<T> {
     renderer: (value: T) => JSX.Element;
 }
   
-const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, onCheckboxChange, onDelete }) => {
+const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, onCheckboxChange, onDelete, onEdit, onToggleModal}) => {
     const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         onCheckboxChange(item.id, field, e.target.checked); 
     };
@@ -37,6 +41,14 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, onCheckboxChang
             onDelete(item.id);
         }
     };
+
+    const handleEdit = async () => {
+        const relatorio = await dashboardService.findRelatorio(item.id);
+        if(!relatorio)
+            window.alert(`Não foi possível retornar os dados do relatorio id:${item.id}`)
+        else
+            onToggleModal(relatorio);
+    }
 
     const columns: Column<any>[] = [
         {
@@ -81,8 +93,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, onCheckboxChang
                         checked={item.is_priority}
                         sx={{ padding: 0, margin: 0 }}
                     />
-                    <FiEye className="w-6 h-6 cursor-pointer" />
-                    <FiEdit className="w-6 h-6 cursor-pointer" />
+                    <FiEdit className="w-6 h-6 cursor-pointer" onClick={handleEdit} />
                     <FiTrash className="w-6 h-6 cursor-pointer" onClick={handleDelete}/>
                 </div>
             ),

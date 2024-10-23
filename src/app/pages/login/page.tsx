@@ -2,7 +2,6 @@
 
 import LoginForm from "@/app/components/LoginForm";
 import LoginController from "@/app/controllers/LoginController";
-import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 

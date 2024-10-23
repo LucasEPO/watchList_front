@@ -6,8 +6,14 @@ export interface Relatorio {
   title: string;
   is_finished: boolean | null;
   is_priority: boolean | null;
-  complete_form: Text;
+  description: Text;
+  prevention_action: Text;
+  risk_action:Text;
+  date: Date;
+  workshift: string;
   create_date: Date;
+  department: string;
+  equipament: string;
   finished_date: Date | null;
   last_update: Date;
   funcionario: Funcionario;

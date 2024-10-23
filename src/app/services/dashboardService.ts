@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { headers } from 'next/headers';
 
-const API_URL = "http://localhost:3001"
+const API_URL = "http://localhost:3001";
 
 const dashboardService = {
     async getReportData() {
@@ -20,11 +19,9 @@ const dashboardService = {
         }
     },
 
-    async updateRelatorio(id: number, field: string, value: any) {
+    async updateRelatorio(id: number, updates: object) {
         try{
-            const response = await axios.patch(`${API_URL}/relatorios/${id}`, {
-                [field]: value,
-            }, { 
+            const response = await axios.patch(`${API_URL}/relatorios/${id}`, updates, { 
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -48,10 +45,26 @@ const dashboardService = {
 
             return response;
         } catch (error) {
-            alert("Erro ao deletar o relatorio!")
+            alert("Erro ao deletar o relatorio!");
             throw error;
         }
     },
+
+    async findRelatorio(id: number) {
+        try {
+            const response = await axios.get(`${API_URL}/relatorios/${id}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            alert("Erro ao buscar o relatorio!");
+            throw error;
+        }
+            
+    }
 };
 
 export default dashboardService;
