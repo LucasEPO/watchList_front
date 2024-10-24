@@ -4,10 +4,11 @@ import React, { FormEvent, useState } from 'react';
 
 interface LoginFormProps {
   onSubmit: (data: { login: string; password: string }) => void;
+  onShowRegistration: () => void;
   hasError: boolean;
 }
 
-const LoginForm = ({ onSubmit, hasError }: LoginFormProps) => {
+const LoginForm = ({ onSubmit, onShowRegistration, hasError }: LoginFormProps) => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
@@ -56,6 +57,7 @@ const LoginForm = ({ onSubmit, hasError }: LoginFormProps) => {
             <button
               type="button"
               className="mt-4 text-orange-500 hover:underline"
+              onClick={onShowRegistration}
             >
               Criar uma conta
             </button>
