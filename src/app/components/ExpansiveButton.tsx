@@ -33,7 +33,7 @@ const ExpansiveButtonProps:React.FC<ExpansiveButtonProps> = ({ icon, label, onCl
       onClick={onClick}
     >
 
-      <span className={`text-2xl transition-transform duration-1000 ${hovered ? 'rotate-180' : 'rotate-0'}`} >
+      <span className={`text-2xl transition-transform duration-1000 ${(hovered && label != "Voltar") ? 'rotate-180' : 'rotate-0'}`} >
         {icon}
       </span>
       <span

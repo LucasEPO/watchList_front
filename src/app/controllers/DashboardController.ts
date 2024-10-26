@@ -1,14 +1,20 @@
 import { useState, useEffect } from 'react';
 import dashboardService from "../services/dashboardService";
 import { Relatorio } from '../models/relatorio.interface';
+import { Funcionario } from '../models/funcionario.interface';
 
 const DashboardController = () => {
-    const tableHeaders = ["Titulo", "Criador", "Data de Criação", "Finalizado", "Ações"];
-    const columnWidths = ["30%", "20%", "15%", "10%", "15%"];
-    const [modal, setModal] = useState(false);
+    const tableReportsHeaders = ["Titulo", "Criador", "Data de Criação", "Finalizado", "Ações"];
+    const reportsColumnWidths = ["30%", "30%", "15%", "10%", "15%"];
+    const tableEmployeesHeaders = ["Nome", "Email", "Ações"];
+    const employeesColumnWidths = ["42.5%", "42.5%", "15%"];
+    const [relatorioModalOpen, setRelatorioModalOpen] = useState(false);
+    const [funcionarioModalOpen, setFuncionarioOpen] = useState(false);
     const [relatorio, setRelatorio] = useState<Relatorio | null>(null);
+    const [funcionario, setFuncionario] = useState<Funcionario | null>(null);
+    const [activeTable, setActiveTable] = useState('reportes');
 
-    const getTableData = async () => {
+    const getReportsTableData = async () => {
         try {
             const data = await dashboardService.getReportData();
     
@@ -30,16 +36,35 @@ const DashboardController = () => {
         }
     };
 
-    const useTableData = () => {
+    const getEmployeesTableData = async () => {
+        try {
+            const data = await dashboardService.getAllEmployees();
+    
+            const formattedData = data.map((employee: Funcionario  ) => {
+                return {
+                    id: employee.id,
+                    name: employee.name,
+                    email: employee.email,
+                };
+            });
+        
+            return formattedData;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    const useTableData = (activeTable: string) => {
         const [tableData, setTableData] = useState<any[]>([]);
         const [loading, setLoading] = useState<boolean>(true);
         const [error, setError] = useState<string | null>(null);
         const [dataLength, setDataLength] = useState<number>(0);
       
         useEffect(() => {
-            const loadTableData = async () => {
+            const loadReportsData = async () => {
                 try {
-                const formattedData = await getTableData(); 
+                const formattedData = await getReportsTableData(); 
                     setTableData(formattedData);
                     setDataLength(formattedData.length);
                 } catch (error) {
@@ -47,10 +72,25 @@ const DashboardController = () => {
                 } finally {
                     setLoading(false);
                 }
-          };
+            };
+            const loadEmployeesData = async () => {
+                try {
+                    const formattedData = await getEmployeesTableData(); 
+                    console.log("ft>", formattedData);
+                    setTableData(formattedData);
+                    setDataLength(formattedData.length);
+                } catch (error) {
+                    setError('Erro ao carregar os dados da tabela');
+                } finally {
+                    setLoading(false);
+                }
+            };
       
-          loadTableData(); 
-        }, []);
+            if(activeTable === 'reportes')
+                loadReportsData(); 
+            else
+                loadEmployeesData();
+        }, [activeTable]);
       
         return { tableData, dataLength, loading, error, setTableData, setLoading, setError, setDataLength };
     };
@@ -59,12 +99,18 @@ const DashboardController = () => {
         setTableData: React.Dispatch<React.SetStateAction<any[]>>,
         setLoading: React.Dispatch<React.SetStateAction<boolean>>,
         setError: React.Dispatch<React.SetStateAction<string | null>>,
-        setDataLength: React.Dispatch<React.SetStateAction<number>>
+        setDataLength: React.Dispatch<React.SetStateAction<number>>,
+        activeTable: string,
     ) => {
         setTableData([]);
         setLoading(true);
         try {
-            const formattedData = await getTableData();
+            let formattedData;
+            if(activeTable === 'reportes'){
+                formattedData = await getReportsTableData();
+            } else {
+                formattedData = await getEmployeesTableData();
+            }
             setTimeout(() => {
                 setTableData(formattedData);
                 setDataLength(formattedData ? formattedData.length : 0);
@@ -84,35 +130,59 @@ const DashboardController = () => {
         return response;
     };
 
-    const deleteRelatorio = async (id: number) => {
-        const response = await dashboardService.deleteRelatorio(id);
+    const deleteRow = async (id: number, activeTable: string) => {
+        let response;
+        if(activeTable === 'reportes')
+            response = await dashboardService.deleteRelatorio(id);
+        else
+            response = await dashboardService.deleteEmployee(id);
         return response;
     };
     
-    const toggleModal = (relatorio?: Relatorio) => {
+    const toggleRelatorioModal = (relatorio?: Relatorio) => {
         if(relatorio){
             setRelatorio(relatorio);
         }
-        setModal(!modal);
-    }
+        setRelatorioModalOpen(!relatorioModalOpen);
+    };
 
-    const updateRelatorio = async (id:number, updates: object) => {
-        const response = await dashboardService.updateRelatorio(id, updates);
+    const toggleFuncionarioModal = (funcionario?: Funcionario) => {
+        if(funcionario){
+            setFuncionario(funcionario);
+        }
+        setFuncionarioOpen(!funcionarioModalOpen);
+    };
+
+    const updateRow = async (id:number, updates: object, activeTable: string) => {
+        let response;
+        if(activeTable === 'reportes')
+            response = await dashboardService.updateRelatorio(id, updates);
+        else
+            response = await dashboardService.updateEmployee(id, updates);
+        
         return response;
     }
 
     return {
-        modal,
-        setModal,
+        relatorioModalOpen,
+        funcionarioModalOpen,
+        setFuncionarioOpen,
+        setRelatorioModalOpen,
+        activeTable,
+        setActiveTable,
         relatorio,
-        tableHeaders,
-        columnWidths,
+        funcionario,
+        tableReportsHeaders,
+        reportsColumnWidths,
+        tableEmployeesHeaders,
+        employeesColumnWidths,
         useTableData,
         refreshTableData,
         updateCheckboxRelatorio,
-        deleteRelatorio,
-        toggleModal,
-        updateRelatorio,
+        deleteRow,
+        toggleRelatorioModal,
+        toggleFuncionarioModal,
+        updateRow,
     };
 }
 

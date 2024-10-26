@@ -16,6 +16,11 @@ const nextConfig = {
           destination: '/pages/dashboard',
           permanent: true,
         },
+        {
+          source: '/settings',
+          destination: '/pages/settings',
+          permanent: true,
+        }
     ],
 };
 
