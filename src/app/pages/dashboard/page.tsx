@@ -7,9 +7,17 @@ import Table from '@/app/components/Table';
 import RelatorioModal from '@/app/components/RelatorioModal';
 import { useRouter } from 'next/navigation';
 import FuncionarioModal from '@/app/components/FuncionarioModal';
+import useTranslation from 'next-translate/useTranslation';
+import { useAlert } from '@/app/contexts/AlertContext';
+import dynamic from 'next/dynamic';
 
+const LanguageSelector = dynamic(() => import("@/app/components/languageSelector"), {
+  ssr: false
+});
 
 export default function Dashboard() {
+  const { t } = useTranslation('commom');
+  const { showAlert } = useAlert();
   const router = useRouter(); 
 
   const {
@@ -48,20 +56,49 @@ export default function Dashboard() {
   };
 
   const handleUpdateReportCheckBox = async (id: number, field: string, value: boolean) => {
-      const response = await updateCheckboxRelatorio(id, field, value);
-      if (response.data) {
-          setTableData((prevData) =>
-              prevData.map((item) => 
-                  item.id === id ? { ...item, [field]: value } : item
-              )
-          );
+      try{
+        const response = await updateCheckboxRelatorio(id, field, value);
+        if (response.data) {
+            setTableData((prevData) =>
+                prevData.map((item) => 
+                    item.id === id ? { ...item, [field]: value } : item
+                )
+            );
+        }
+      } catch (error: any) {
+        let errorMessage = '';
+
+        switch (error.code) {
+            case 'ERROR_UPDATE':
+            default:
+                errorMessage = t('pages.dashboard.service-alerts.reports.update');
+                break;
+        }
+
+        showAlert("error", errorMessage);
       }
   };
 
   const handleDelete = async (id: number, activeTable: string) => {
+    try{
       const response = await deleteRow(id, activeTable);
           if (response.status === 200) 
               setTableData((prevData) => prevData.filter((item) => item.id !== id));
+    } catch (error: any) {
+          let errorMessage = '';
+
+          switch (error.code) {
+              case 'ERROR_DELETE':
+              default:
+                  if(activeTable === 'reportes')
+                      errorMessage = t('pages.dashboard.service-alerts.reports.delete');
+                  else
+                      errorMessage = t('pages.dashboard.service-alerts.employees.delete');
+                  break;
+          }
+
+          showAlert("error", errorMessage);
+      }
   };
 
   const handleUpdateRow = async (id: number, updates: object, activeTable: string) => {
@@ -74,8 +111,20 @@ export default function Dashboard() {
                 )
             );
         }
-    } catch (error) {
-        console.error("Erro ao pegar a linha atualizada:", error);
+    } catch (error: any) {
+        let errorMessage = '';
+
+        switch (error.code) {
+            case 'ERROR_UPDATE':
+            default:
+                if(activeTable === 'reportes')
+                    errorMessage = t('pages.dashboard.service-alerts.reports.delete');
+                else
+                    errorMessage = t('pages.dashboard.service-alerts.employees.delete');
+                break;
+        }
+
+        showAlert("error", errorMessage);
     }
   };
 
@@ -88,9 +137,12 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-b from-black to-[#3f3f3f]">
 
       <header className="flex justify-between p-4 items-center">
-        <div className="text-xl font-bold">WatchList</div>
-        <div className="mr-5">
-            <ExpansiveButton icon={<FiLogOut/>} label="Sair" onClick={logOut}/>
+        <div className="text-xl font-bold">{t('app.watchlist')}</div>
+        <div className="flex items-center mr-5">
+            <div className="mr-3 -mt-2">
+              <LanguageSelector />
+            </div>
+            <ExpansiveButton icon={<FiLogOut/>} label={t('pages.dashboard.logout')} onClick={logOut}/>
         </div>
       </header>
 
@@ -102,7 +154,7 @@ export default function Dashboard() {
               activeTable === 'reportes' ? 'bg-orange-400 text-white shadow-md' : 'text-orange-400'
             }`}
             > 
-            Reportes de Risco 
+            {t('pages.dashboard.report-table.title')}
           </button>
           <button 
             onClick={() => setActiveTable('funcionarios')}
@@ -110,14 +162,14 @@ export default function Dashboard() {
               activeTable === 'funcionarios' ? 'bg-orange-400 text-white shadow-md' : 'text-orange-400'
             }`}
             > 
-            Funcionários 
+            {t('pages.dashboard.employee-table.title')}
           </button>
         </div>
         {activeTable === 'reportes' &&
           <Table 
             headers={tableReportsHeaders} 
             data={tableData} 
-            tableTitle='Reportes de Risco'
+            tableTitle={t('pages.dashboard.report-table.title')}
             activeTable={activeTable}
             columnWidths={reportsColumnWidths}
             dataLength={dataLength}
@@ -134,7 +186,7 @@ export default function Dashboard() {
           <Table 
             headers={tableEmployeesHeaders} 
             data={tableData} 
-            tableTitle='Funcionários'
+            tableTitle={t('pages.dashboard.employee-table.title')}
             activeTable={activeTable}
             columnWidths={employeesColumnWidths}
             dataLength={dataLength}
@@ -147,8 +199,18 @@ export default function Dashboard() {
             onToggleModal={toggleFuncionarioModal}
           />
         }
-        <RelatorioModal isOpen={relatorioModalOpen} onClose={toggleRelatorioModal} handleRefresh={handleRefresh} relatorio={relatorio} />
-        <FuncionarioModal isOpen={funcionarioModalOpen} onClose={toggleFuncionarioModal} handleRefresh={handleRefresh} funcionario={funcionario} />
+        <RelatorioModal 
+          isOpen={relatorioModalOpen} 
+          onClose={toggleRelatorioModal}
+          handleRefresh={handleRefresh} 
+          relatorio={relatorio} 
+        />
+        <FuncionarioModal 
+          isOpen={funcionarioModalOpen} 
+          onClose={toggleFuncionarioModal} 
+          handleRefresh={handleRefresh} 
+          funcionario={funcionario} 
+        />
       </main>
     </div>
   );

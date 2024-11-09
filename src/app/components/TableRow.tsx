@@ -4,6 +4,8 @@ import { FiEdit, FiEye, FiTrash } from 'react-icons/fi';
 import { HiOutlineStar, HiStar } from 'react-icons/hi2';
 import dashboardService from '../services/dashboardService';
 import { Relatorio } from '../models/relatorio.interface';
+import { useAlert } from '../contexts/AlertContext';
+import useTranslation from 'next-translate/useTranslation';
 
 interface Item {
     id:number;
@@ -40,6 +42,9 @@ interface Column<T> {
 }
   
 const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, onCheckboxChange, onDelete, onEdit, onToggleModal}) => {
+    const { t } = useTranslation('commom');
+    const { showAlert } = useAlert();
+
     const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         onCheckboxChange(item.id, field, e.target.checked); 
     };
@@ -47,30 +52,55 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
     const handleDelete= () => {
         let confirmMessage = '';
         if(activeTable === 'reportes')
-            confirmMessage = `Tem certeza que deseja deletar o relatório ${(item as RelatorioItem).title}?`;
+            confirmMessage = `${t('pages.dashboard.tables.alerts.report.delete', {title: (item as RelatorioItem).title})}`;
         else
-            confirmMessage = `Tem certeza que deseja deletar o funcionário ${(item as EmployeeItem).name}?`;
+            confirmMessage = `${t('pages.dashboard.tables.alerts.employee.delete',{name: (item as EmployeeItem).name})}`;
         
-            if (window.confirm(confirmMessage)) {
+        if (window.confirm(confirmMessage)) {
             onDelete(item.id, activeTable);
+            let successMessage = '';
+            if(activeTable === 'reportes')
+                successMessage = `${t('pages.dashboard.tables.alerts.report.delete-success', {title: (item as RelatorioItem).title})}`;
+            else
+                successMessage = `${t('pages.dashboard.tables.alerts.employee.delete-success',{name: (item as EmployeeItem).name})}`;
+            
+            showAlert("success", successMessage);
         }
     };
 
     const handleEdit = async () => {
-        if(activeTable === 'reportes'){
-            const relatorio = await dashboardService.findRelatorio(item.id);
-        
-            if(!relatorio)
-                window.alert(`Não foi possível retornar os dados do relatorio id:${item.id}`)
-            else
-                onToggleModal(relatorio);
+        try{
+            if(activeTable === 'reportes'){
+                const relatorio = await dashboardService.findRelatorio(item.id);
+            
+                if(relatorio)
+                    onToggleModal(relatorio);
         }else {
             const funcionario = await dashboardService.findEmployee(item.id);
-        
-            if(!funcionario)
-                window.alert(`Não foi possível retornar os dados do funcionario id:${item.id}`)
-            else
+            
+            if(funcionario)
                 onToggleModal(funcionario);
+        }
+        } catch (error: any) {
+            let errorMessage = '';
+
+            switch (error.code) {
+                case 'ERROR_NOT_FOUND':
+                    if(activeTable  === 'reportes')
+                        errorMessage = `${t('pages.dashboard.tables.alerts.report.error-id', {id:item.id})}`;
+                    else
+                        errorMessage = `${t('pages.dashboard.tables.alerts.employee.error-id', {id:item.id})}`;
+
+                    break;
+                case 'ERROR_FETCHING':
+                default:
+                    if(activeTable  === 'reportes')
+                        errorMessage = t('pages.dashboard.service-alerts.reports.find-one');
+                    else
+                        errorMessage = t('pages.dashboard.service-alerts.employees.find-one');
+                    break;
+            }
+            showAlert("error", errorMessage);
         }
         
     }
@@ -82,17 +112,17 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
             renderer: (value: string) => <span>{value}</span>,
         },
         {
-            name: 'criador',
+            name: 'creator',
             value: (item as RelatorioItem).funcionario?.name,
             renderer: (value: string) => <span>{value}</span>,
         },
         {
-            name: 'data de criação',
+            name: 'date',
             value: (item as RelatorioItem).create_date,
             renderer: (value: Date) => <span>{moment(value).format('DD/MM/YYYY')}</span>,
         },
         {
-            name: 'finalizado',
+            name: 'fininished',
             value: (item as RelatorioItem).is_finished,
             renderer: (value: boolean) => (
                 <Checkbox 
@@ -107,7 +137,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
             ),
         },
         {
-            name: 'Ações',
+            name: 'actions',
             value: item,
             renderer: (item: RelatorioItem) => (
                 <div className="flex justify-between mx-4">
@@ -127,7 +157,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
 
     const employeeColumns: Column<any>[] = [
         {
-            name: 'nome',
+            name: 'name',
             value: (item as EmployeeItem).name,
             renderer: (value: string) => <span>{value}</span>,
         },
@@ -137,7 +167,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
             renderer: (value: string) => <span>{value}</span>,
         },
         {
-            name: 'Ações',
+            name: 'actions',
             value: item,
             renderer: (item: EmployeeItem) => (
                 <div className="flex justify-between mx-4">
@@ -155,8 +185,6 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
         columns = employeeColumns;
     }
 
-    console.log(columnWidths);
-  
     return (
         <tr className="even:bg-gray-100 odd:bg-white hover:bg-gray-300 ">   
             {columns.map((column, index) => (

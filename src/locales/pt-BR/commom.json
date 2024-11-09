@@ -1,0 +1,156 @@
+{
+  "app": {
+    "watchlist": "WatchList",
+    "language": "Idioma"
+  },
+  "pages": {
+    "login": {
+      "title-form": "Cadastrar empresa",
+      "alert": {
+        "error-incorrect": "Usuário ou senha incorretos!",
+        "error-token": "Erro ao gerar token!",
+        "error": "Erro no login código {{status}}"
+      },
+      "login-form": {
+        "login": "Login",
+        "login-placeholder": "Login da empresa",
+        "password": "Senha",
+        "password-placeholder": "Digite sua Senha",
+        "create-account": "Criar uma conta"
+      },
+      "registration-form": {
+        "company-name": "Nome da empresa",
+        "login": "Login",
+        "password": "Senha",
+        "repeat-password": "Repetir a senha",
+        "register": "Cadastrar",
+        "back": "Voltar ao Login",
+        "alerts": {
+          "success": "Empresa cadastrada com sucesso!",
+          "required-fields": "Por favor, preencha todos os campos!",
+          "match-passwords": "As senhas devem ser iguais!",
+          "duplicated-login": "Login já cadastrado",
+          "error": "Falha no registro da empresa"
+        }
+      }
+    },
+    "dashboard": {
+      "logout": "Sair",
+      "row-update": "Erro ao pegar a linha atualizada: {{message}}",
+      "service-alerts": {
+        "no-auth": "Usuário não autenticado ou ID da empresa não encontrado",
+        "reports": {
+          "find": "Erro ao buscar reportes de risco!",
+          "find-one": "Erro ao buscar o reporte de risco!",
+          "update": "Erro ao atualizar o reporte de risco!",
+          "delete": "Erro ao deletar o reporte de risco!"
+        },
+        "employees": {
+          "find": "Erro ao buscar funcionários!",
+          "find-one": "Erro ao buscar o funcionario!",
+          "update": "Erro ao atualizar o funcionario!",
+          "delete": "Erro ao deletar o funcionario!",
+          "create": "Erro ao criar funcionário!"
+        },
+        "company": {
+          "find": "Erro ao buscar a empresa!"
+        }
+      },
+      "report-table": {
+        "title": "Reportes de Risco",
+        "columns": {
+          "title": "Título",
+          "creator": "Criador",
+          "date": "Data",
+          "finished": "Finalizado",
+          "actions": "Ações"
+        }
+      },
+      "report-modal": {
+        "title-new": "Novo Reporte de Risco",
+        "title-edit": "Editar: {{title}}",
+        "fields": {
+          "title": "Título",
+          "employee": "Funcionário",
+          "department": "Área",
+          "equipment": "Equipamento",
+          "priority": "Prioridade",
+          "finished": "Finalizado",
+          "date": "Data",
+          "finish-date": "Data de finalização",
+          "workshifts": {
+            "workshift": "Turno",
+            "first": "1°",
+            "second": "2°",
+            "third": "3°"
+          },
+          "description": "Descrição",
+          "prevention-label": "O que foi feito para evitar ser um acidente?",
+          "risk-label": "Algo pode ser feito para eliminar o risco?"
+        },
+        "buttons": {
+          "cancel": "Cancelar",
+          "save": "Salvar",
+          "edit": "Editar"
+        },
+        "alerts": {
+          "create-success": "Reporte de Risco criado com sucesso!",
+          "update-success":"Reporte de Risco alterado com sucesso!",
+          "error-company": "Erro ao buscar por empresa!"
+        }
+      },
+      "employee-table": {
+        "title": "Funcionários",
+        "columns": {
+          "name": "Nome",
+          "email": "Email",
+          "actions": "Ações"
+        }
+      },
+      "employee-modal": {
+        "title-new": "Novo Funcionário",
+        "title-edit": "Editar: {{name}}",
+        "alerts": {
+          "update-success": "Funcionário alterado com sucesso!",
+          "create-success": "Funcionário criado com sucesso!",
+          "error-company": "Erro ao buscar por empresa!"
+        },
+        "fields": {
+          "name": "Nome",
+          "email": "Email"
+        },
+        "buttons": {
+          "cancel": "Cancelar",
+          "save": "Salvar",
+          "edit": "Editar"
+        }
+      },
+      "tables": {
+        "header": {
+          "results": "Resultados",
+          "buttons": {
+            "add-report": "Novo Reporte",
+            "add-employee": "Novo Funcionário",
+            "refresh": "Atualizar Tabela"
+          }
+        },
+        "alerts": {
+          "error-title": "Erro ao buscar dados!!",
+          "error-description": "Por favor atualize a tabela ou entre contato com suporte",
+          "error-loading": "Erro ao carregar os dados da tabela",
+          "error-refresh": "Erro ao atualizar os dados da tabela",
+          "report": {
+            "delete-success": "{{title}} deletado com sucesso!",
+            "delete": "Tem certeza que deseja deletar o reporte {{title}}?",
+            "error-id": "Não foi possível retornar os dados do reporte de risco {{id}}"
+          },
+          "employee": {
+            "delete-success": "{{name}} deletado com sucesso!",
+            "delete": "Tem certeza que deseja deletar o funcionário {{name}}?",
+            "error-id": "Não foi possível retornar os dados do funcionário {{id}}"
+          }
+        }
+      }
+    }
+  }
+}

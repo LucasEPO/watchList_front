@@ -4,6 +4,7 @@ import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 import { FiPlus, FiRefreshCw } from "react-icons/fi";
 import ExpansiveButton from '@/app/components/ExpansiveButton';
+import useTranslation from 'next-translate/useTranslation';
 
 interface TableProps {
     headers: string[];  
@@ -22,25 +23,35 @@ interface TableProps {
 }
 
 const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, columnWidths, dataLength, loading, error, onRefresh, onCheckboxChange, onDelete, onToggleModal, onEdit }) => {
+    const { t } = useTranslation('commom');
+
     let labelBtnNew = '';
     if(activeTable === "reportes")
-        labelBtnNew = "Novo Reporte"
+        labelBtnNew = t('pages.dashboard.tables.header.buttons.add-report');
     else if(activeTable === "funcionarios")
-        labelBtnNew = "Novo Funcionário"
+        labelBtnNew = t('pages.dashboard.tables.header.buttons.add-employee');
         
   return (
     <div className="">
         <div className="p-4 bg-orange-400 rounded-t-3xl w-full flex justify-between">
             <div className="inline-block float-left text-left">
                 <p className="font-bold text-lg">{tableTitle}</p>
-                <p className="opacity-75">{dataLength} Resultados</p>
+                <p className="opacity-75">{dataLength} {t('pages.dashboard.tables.header.results')}</p>
             </div>
             <div className="float-right text-right">
                 <div className="inline-block mr-2 drop-shadow-2xl">
-                    <ExpansiveButton icon={<FiPlus />} label={labelBtnNew} onClick={onToggleModal}/>
+                    <ExpansiveButton 
+                        icon={<FiPlus />} 
+                        label={labelBtnNew} 
+                        onClick={onToggleModal}
+                    />
                 </div>
                 <div className="inline-block drop-shadow-2xl">
-                    <ExpansiveButton icon={<FiRefreshCw />} label="Atualizar Tabela" onClick={onRefresh}/>
+                    <ExpansiveButton 
+                        icon={<FiRefreshCw />} 
+                        label={t('pages.dashboard.tables.header.buttons.refresh')} 
+                        onClick={onRefresh}
+                    />
                 </div>
             </div>
         </div>

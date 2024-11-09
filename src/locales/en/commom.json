@@ -1,0 +1,156 @@
+{
+  "app": {
+    "watchlist": "WatchList",
+    "language": "Language"
+  },
+  "pages": {
+    "login": {
+      "title-form": "Create Company",
+      "alert": {
+        "error-incorrect": "User or Password incorrect!",
+        "error-token": "Error in token generation!",
+        "error": "Login failed code {{status}}"
+      },
+      "login-form": {
+        "login": "Login",
+        "login-placeholder": "Company login",
+        "password": "Password",
+        "password-placeholder": "Insert your password",
+        "create-account": "Create account"
+      },
+      "registration-form": {
+        "company-name": "Company name",
+        "login": "Login",
+        "password": "Password",
+        "repeat-password": "Repeat password",
+        "register": "Register",
+        "back": "Back to login",
+        "alerts": {
+          "success": "Company registered successfully!",
+          "required-fields": "Please fill in all required fields!",
+          "match-passwords": "Passwords must be the same!",
+          "duplicated-login": "Login already exists",
+          "error": "Company registration failure"
+        }
+      }
+    },
+    "dashboard": {
+      "logout": "Log out",
+      "row-update": "Error getting updated row: {{message}}",
+      "service-alerts": {
+        "no-auth": "User not authenticated or company ID not found",
+        "reports": {
+          "find": "Error fetching risk reports!",
+          "find-one": "Error fetching the risk report!",
+          "update": "Error updating risk report!",
+          "delete": "Error deleting risk report!"
+        },
+        "employees": {
+          "find": "Error fetching for employees!",
+          "find-one": "Error fetching the employee!",
+          "update": "Error updating employee!",
+          "delete": "Error deleting employee!",
+          "create": "Error creating employee!"
+        },
+        "company": {
+          "find": "Error fetching for company!"
+        }
+      },
+      "report-table": {
+        "title": "Risk Reports",
+        "columns": {
+          "title": "Title",
+          "creator": "Creator",
+          "date": "Date",
+          "finished": "Finished", 
+          "actions": "Actions"
+        }
+      },
+      "report-modal": {
+        "title-new": "New Risk Report",
+        "title-edit": "Edit: {{name}}",
+        "fields": {
+          "title": "Title",
+          "employee": "Employee",
+          "department": "Department",
+          "equipment": "Equipment",
+          "priority": "Priority",
+          "finished": "Finished",
+          "date": "Date",
+          "finish-date": "Finished Date",
+          "workshifts": {
+            "workshift": "Workshift",
+            "first": "1°",
+            "second": "2°",
+            "third": "3°"
+          },
+          "description": "Description",
+          "prevention-label": "What was done to prevent the accident?",
+          "risk-label": "Can anything be done to eliminate the risk?"
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "save": "Save",
+          "edit": "Edit"
+        },
+        "alerts": {
+          "create-success": "Risk Report created successfully!",
+          "update-success":"Risk Report updated successfully!",
+          "error-company": "Error searching for company!"
+        }
+      },
+      "employee-table": {
+        "title": "Employees",
+        "columns": {
+          "name": "Name",
+          "email": "Email",
+          "actions": "Actions"
+        }
+      },
+      "employee-modal": {
+        "title-new": "New Employee",
+        "title-edit": "Edit: {{name}}",
+        "alerts": {
+          "update-success": "Employee updated successfully!",
+          "create-success": "Employee created successfully!",
+          "error-company": "Error searching for company!"
+        },
+        "fields": {
+          "name": "Name",
+          "email": "Email"
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "save": "Save",
+          "edit": "Edit"
+        }
+      },
+      "tables": {
+        "header": {
+          "results": "Results",
+          "buttons": {
+            "add-report": "New Report",
+            "add-employee": "New Employee",
+            "refresh": "Refresh Table"
+          }
+        },
+        "alerts": {
+          "error-title": "Error fetching data!!",
+          "error-description": "Please update the table or contact support",
+          "error-loading": "Error loading table data",
+          "error-refresh": "Error updating table data",
+          "report": {
+            "delete": "Are you sure you want to delete the report {{title}}?",
+            "delete-success": "{{title}} successfully deleted!",
+            "error-id": "Unable to return data for report {{id}}"
+          },
+          "employee": {
+            "delete": "Are you sure you want to delete the employee {{name}}?",
+            "delete-success": "{{name}} successfully deleted!",
+            "error-id": "Unable to return data for employee {{id}}"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import useTranslation from 'next-translate/useTranslation';
 import { FaExclamation, FaSearch } from 'react-icons/fa';
 
 interface TableAlertProps {
@@ -7,6 +8,8 @@ interface TableAlertProps {
 }
 
 const TableAlert: React.FC<TableAlertProps> = ({ error, loading, dataLength }) => {
+    const { t } = useTranslation('commom');
+
     if (loading) {
         return (
             <tbody>
@@ -37,8 +40,8 @@ const TableAlert: React.FC<TableAlertProps> = ({ error, loading, dataLength }) =
                             <div className="relative drop-shadow-2xl">
                                 <FaSearch className="text-orange-500 text-9xl absolute top-1/2 -translate-y-1/2 custom--translate-x-53" />
                                 <div className="absolute w-96 -translate-x-32 -translate-y-12 bg-orange-500 rounded-r-2xl p-3">
-                                    <p className="text-sm font-bold">Erro ao buscar dados!!</p>
-                                    <p className="text-sm">Por favor atualize a tabela ou entre contato com suporte</p>
+                                    <p className="text-sm font-bold">{t('pages.dashboard.tables.alerts.error-title')}</p>
+                                    <p className="text-sm">{t('pages.dashboard.tables.alerts.error-description')}</p>
                                 </div>
                                 <FaExclamation className="absolute drop-shadow-2xl top-1/2 -translate-x-44 -translate-y-7 text-red-500 text-4xl" />
                             </div>

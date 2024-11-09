@@ -1,22 +1,8 @@
 /** @type {import('next').NextConfig} */
+import nextTranslate from 'next-translate-plugin';
+
 const nextConfig = {
-    redirects: async () => [
-        {
-          source: '/',
-          destination: '/login',
-          permanent: true,
-        },
-        {
-          source: '/login',
-          destination: '/pages/login',
-          permanent: true,
-        },
-        {
-          source: '/dashboard',
-          destination: '/pages/dashboard',
-          permanent: true,
-        }
-    ],
+    reactStrictMode: true,
 };
 
-export default nextConfig;
+export default nextTranslate(nextConfig);

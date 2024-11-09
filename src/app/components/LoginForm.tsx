@@ -1,5 +1,6 @@
 'use client';
 
+import useTranslation from 'next-translate/useTranslation';
 import React, { FormEvent, useState } from 'react';
 
 interface LoginFormProps {
@@ -9,6 +10,7 @@ interface LoginFormProps {
 }
 
 const LoginForm = ({ onSubmit, onShowRegistration, hasError }: LoginFormProps) => {
+  const { t } = useTranslation("commom");
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
 
@@ -21,28 +23,28 @@ const LoginForm = ({ onSubmit, onShowRegistration, hasError }: LoginFormProps) =
     <form onSubmit={handleSubmit}>
         <div className="mb-4">
             <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="login">
-              Login
+              {t('pages.login.login-form.login')}
             </label>
             <input
               id="login"
               type="text"
               value={login}
               onChange={(event) => setLogin(event.target.value)}
-              placeholder="Login da Empresa"
+              placeholder={t('pages.login.login-form.login-placeholder')}
               className={`w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 ${hasError? 'outline outline-red-600' : ''}`}
               required
             />
         </div>
         <div className="mb-6">
             <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="password">
-              Senha
+              {t('pages.login.login-form.password')}
             </label>
             <input
               id="password"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              placeholder="Digite senha"
+              placeholder={t('pages.login.login-form.password-placeholder')}
               className={`w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 ${hasError? 'outline outline-red-600' : ''}`}
               required
             />
@@ -52,14 +54,14 @@ const LoginForm = ({ onSubmit, onShowRegistration, hasError }: LoginFormProps) =
               type="submit"
               className="w-full bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"
             >
-              Login
+              {t('pages.login.login-form.login')}
             </button>
             <button
               type="button"
               className="mt-4 text-orange-500 hover:underline"
               onClick={onShowRegistration}
             >
-              Criar uma conta
+              {t('pages.login.login-form.create-account')}
             </button>
         </div>
     </form>

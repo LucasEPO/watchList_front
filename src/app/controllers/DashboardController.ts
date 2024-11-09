@@ -2,11 +2,26 @@ import { useState, useEffect } from 'react';
 import dashboardService from "../services/dashboardService";
 import { Relatorio } from '../models/relatorio.interface';
 import { Funcionario } from '../models/funcionario.interface';
+import useTranslation from 'next-translate/useTranslation';
+import { useAlert } from '../contexts/AlertContext';
 
 const DashboardController = () => {
-    const tableReportsHeaders = ["Titulo", "Criador", "Data de Criação", "Finalizado", "Ações"];
+    const { t } = useTranslation('commom');
+    const { showAlert } = useAlert();
+
+    const tableReportsHeaders = [
+        t('pages.dashboard.report-table.columns.title'),
+        t('pages.dashboard.report-table.columns.creator'),
+        t('pages.dashboard.report-table.columns.date'),
+        t('pages.dashboard.report-table.columns.finished'),
+        t('pages.dashboard.report-table.columns.actions'),
+    ];
     const reportsColumnWidths = ["30%", "30%", "15%", "10%", "15%"];
-    const tableEmployeesHeaders = ["Nome", "Email", "Ações"];
+    const tableEmployeesHeaders = [
+        t('pages.dashboard.employee-table.columns.name'),
+        t('pages.dashboard.employee-table.columns.email'),
+        t('pages.dashboard.employee-table.columns.actions'),
+    ];
     const employeesColumnWidths = ["42.5%", "42.5%", "15%"];
     const [relatorioModalOpen, setRelatorioModalOpen] = useState(false);
     const [funcionarioModalOpen, setFuncionarioOpen] = useState(false);
@@ -30,9 +45,20 @@ const DashboardController = () => {
             });
         
             return formattedData;
-        } catch (error) {
-            console.error(error);
-            throw error;
+        } catch (error: any) {
+            let errorMessage = '';
+
+            switch (error.code) {
+                case 'ERROR_UNAUTHORIZED':
+                    errorMessage = t('pages.dashboard.service-alerts.no-auth');
+                    break;
+                case 'ERROR_DATA_SEARCH':
+                default:
+                    errorMessage = t('pages.dashboard.service-alerts.reports.find');
+                    break;
+            }
+            
+            showAlert("error", errorMessage);
         }
     };
 
@@ -49,9 +75,20 @@ const DashboardController = () => {
             });
         
             return formattedData;
-        } catch (error) {
-            console.error(error);
-            throw error;
+        } catch (error: any) {
+            let errorMessage = '';
+
+            switch (error.code) {
+                case 'ERROR_UNAUTHORIZED':
+                    errorMessage = t('pages.dashboard.service-alerts.no-auth');
+                    break;
+                case 'ERROR_DATA_SEARCH':
+                default:
+                    errorMessage = t('pages.dashboard.service-alerts.employees.find');
+                    break;
+            }
+            
+            showAlert("error", errorMessage);
         }
     }
 
@@ -68,7 +105,7 @@ const DashboardController = () => {
                     setTableData(formattedData);
                     setDataLength(formattedData.length);
                 } catch (error) {
-                    setError('Erro ao carregar os dados da tabela');
+                    setError(t('pages.dashboard.alerts.error-loading'));
                 } finally {
                     setLoading(false);
                 }
@@ -76,11 +113,11 @@ const DashboardController = () => {
             const loadEmployeesData = async () => {
                 try {
                     const formattedData = await getEmployeesTableData(); 
-                    console.log("ft>", formattedData);
+
                     setTableData(formattedData);
                     setDataLength(formattedData.length);
                 } catch (error) {
-                    setError('Erro ao carregar os dados da tabela');
+                    setError(t('pages.dashboard.alerts.error-loading'));
                 } finally {
                     setLoading(false);
                 }
@@ -116,7 +153,7 @@ const DashboardController = () => {
                 setDataLength(formattedData ? formattedData.length : 0);
             }, 1000);
         } catch (error) {
-            setError('Erro ao atualizar os dados da tabela');
+            setError(t('pages.dashboard.alerts.error-refresh'));
         } finally {
             setTimeout(() => {
                 setLoading(false);
@@ -132,24 +169,26 @@ const DashboardController = () => {
 
     const deleteRow = async (id: number, activeTable: string) => {
         let response;
+
         if(activeTable === 'reportes')
             response = await dashboardService.deleteRelatorio(id);
         else
             response = await dashboardService.deleteEmployee(id);
         return response;
+        
     };
     
     const toggleRelatorioModal = (relatorio?: Relatorio) => {
-        if(relatorio){
+        if(relatorio)
             setRelatorio(relatorio);
-        }
+        
         setRelatorioModalOpen(!relatorioModalOpen);
     };
 
     const toggleFuncionarioModal = (funcionario?: Funcionario) => {
-        if(funcionario){
+        if(funcionario)
             setFuncionario(funcionario);
-        }
+        
         setFuncionarioOpen(!funcionarioModalOpen);
     };
 
@@ -161,6 +200,7 @@ const DashboardController = () => {
             response = await dashboardService.updateEmployee(id, updates);
         
         return response;
+        
     }
 
     return {

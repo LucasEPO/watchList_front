@@ -4,6 +4,7 @@ import { Funcionario } from '../models/funcionario.interface.js';
 import moment from 'moment';
 import { Relatorio } from '../models/relatorio.interface.js';
 import dashboardService from '../services/dashboardService';
+import useTranslation from 'next-translate/useTranslation';
 
 interface AutocompleteOption {
     id: number;
@@ -13,6 +14,8 @@ interface AutocompleteOption {
 const API_URL = "http://localhost:3001"; 
     
 const RelatorioModalController = (onClose: () => void, handleRefresh: () => void, relatorio: Relatorio | null) => {   
+    const { t } = useTranslation('commom');
+
     const [enterpriseId, setEnterpriseId] = React.useState<number | null>(null);
 
     const initialFormData = {
@@ -81,10 +84,11 @@ const RelatorioModalController = (onClose: () => void, handleRefresh: () => void
         setWorkshift('1');
     };
 
-    const handleSubmit = async (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent, showAlert: (type: 'success' | 'warning' | 'error' | 'info', message: string) => void) => {
         event.preventDefault();
         let response;
         try {
+
             if (relatorio && relatorio.id) {
                 response = await dashboardService.updateRelatorio(relatorio.id, {
                     ...formData,
@@ -94,20 +98,46 @@ const RelatorioModalController = (onClose: () => void, handleRefresh: () => void
                     prevention_action: formData.preventionAction,
                     risk_action: formData.riskAction,
                 });
+                showAlert("success", t('pages.dashboard.report-modal.alerts.update-success'));
 
             } else {
+
+                if(!enterpriseId)
+                    throw {code: 'ERROR_COMPANY_NOT_FOUND', status: 404};
+                
+
                 response = await axios.post(`${API_URL}/relatorios`, {
                     ...formData,
                     isPriority,
                     isFinished,
                     workshift,
                 });
+
+                showAlert("success", t('pages.dashboard.report-modal.alerts.create-success'));
             }
+
             handleRefresh();
             handleCloseModal();
+
             return response;
-        } catch (error) {
-            console.log(error);
+        } catch (error: any) {
+            let errorMessage = '';
+
+            switch (error.code) {
+                case 'ERROR_COMPANY_NOT_FOUND':
+                    errorMessage = t('pages.dashboard.report-modal.alerts.error-company');
+                    break;
+                case 'ERROR_NOT_FOUND':
+                    errorMessage = t('pages.dashboard.service-alerts.reports.find-one');
+                case 'ERROR_UPDATE':
+                    errorMessage = t('pages.dashboard.service-alerts.reports.update');
+                case 'ERROR_CREATE':
+                default:
+                    errorMessage = t('pages.dashboard.service-alerts.reports.create');
+                    break;
+            }
+
+            showAlert("error", errorMessage);
         }
     };
 
@@ -124,24 +154,36 @@ const RelatorioModalController = (onClose: () => void, handleRefresh: () => void
         setIsFinished(event.target.checked);
     };
   
-    const handleAutocompleteOpen = () => {
+    const handleAutocompleteOpen = (showAlert: (type: 'success' | 'warning' | 'error' | 'info', message: string) => void) => {
         setAutocompleteOpen(true);
-        fetchOptions();
+        fetchOptions(showAlert);
     }; 
 
-    const fetchOptions = async () => {
+    const fetchOptions = async (showAlert?: (type: 'success' | 'warning' | 'error' | 'info', message: string) => void) => {
         setLoading(true);
         try {
             const empresaId = sessionStorage.getItem("empresa_id");
-            if (!empresaId) throw new Error("Id da empresa não encontrado");
+            if (!empresaId) throw {code: 'ERROR_COMPANY_NOT_FOUND'};
 
             const response = await axios.get(`${API_URL}/funcionarios/empresa/${empresaId}`);
             setOptions(response.data.map((funcionario: Funcionario) => ({
                 id: funcionario.id,
                 name: funcionario.name,
             })));
-        } catch (error) {
-            console.error(error);
+        } catch (error:any) {
+            let errorMessage = '';
+
+            switch (error.code) {
+                case 'ERROR_COMPANY_NOT_FOUND':
+                    errorMessage = t('pages.dashboard.report-modal.alerts.error-company');
+                    break;
+                case 'ERROR_FETCHING':
+                    errorMessage = t('pages.dashboard.report-modal.alerts.error-find');
+                default:
+                    break;
+            }
+
+            showAlert ? showAlert("error", errorMessage) : console.log(errorMessage);
         } finally {
             setLoading(false);
         }

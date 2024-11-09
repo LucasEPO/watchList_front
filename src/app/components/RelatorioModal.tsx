@@ -12,6 +12,8 @@ import moment from 'moment';
 import { HiOutlineStar, HiStar } from 'react-icons/hi2';
 import RelatorioModalController from '../controllers/RelatorioModalController';
 import { Relatorio } from '../models/relatorio.interface.js';
+import { useAlert } from '../contexts/AlertContext';
+import useTranslation from 'next-translate/useTranslation';
 
 interface RelatorioModalProps {
     isOpen: boolean;
@@ -21,6 +23,9 @@ interface RelatorioModalProps {
 }
 
 const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handleRefresh, relatorio }) => {
+    const { t } = useTranslation('commom');
+    const { showAlert } = useAlert();
+
     const {
         autocompleteOpen,
         formData,
@@ -57,14 +62,14 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
           overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 backdrop-blur-sm"
         >
             <h1 className="text-start font-extrabold text-lg mb-3">
-                {relatorio && relatorio.title ? `Editar: ${relatorio.title}` : 'Novo Reporte de Risco'}
+                {relatorio && relatorio.title ? `${t('pages.dashboard.report-modal.title-edit', { title: relatorio.title })}` : `${t('pages.dashboard.report-modal.title-new')}`}
             </h1>
             <Divider variant="middle" className="bg-white"/>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => handleSubmit(e, showAlert)}>
                 <div className="grid grid-cols-12 mb-3 gap-4">
                     <TextField 
                         id="title" 
-                        label="Título" 
+                        label={t('pages.dashboard.report-modal.fields.title')}
                         variant="outlined" 
                         sx={textFieldStyles} 
                         className="col-span-5" 
@@ -77,7 +82,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                             id="employee"
                             sx={{ width: "100%" }}
                             open={autocompleteOpen}
-                            onOpen={handleAutocompleteOpen}
+                            onOpen={() => handleAutocompleteOpen(showAlert)}
                             onClose={handleAutocompleteClose}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             getOptionLabel={(option) => option.name}
@@ -91,7 +96,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                                 <TextField
                                 sx={textFieldStyles}
                                 {...params}
-                                label="Funcionário"
+                                label={t('pages.dashboard.report-modal.fields.employee')}
                                 required
                                 slotProps={{
                                     input: {
@@ -112,7 +117,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                 <div className="grid grid-cols-12 mb-3 gap-4">
                     <TextField 
                         id="department" 
-                        label="Área" 
+                        label={t('pages.dashboard.report-modal.fields.department')} 
                         variant="outlined" 
                         sx={textFieldStyles} 
                         className="col-span-7" 
@@ -121,7 +126,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                     />
                     <TextField 
                         id="equipament" 
-                        label="Equipamento" 
+                        label={t('pages.dashboard.report-modal.fields.equipment')} 
                         variant="outlined" 
                         sx={textFieldStyles} 
                         className="col-span-5" 
@@ -140,7 +145,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                                     onChange={handlePriorityChange}  
                                 />
                             }
-                            label="Prioridade"
+                            label={t('pages.dashboard.report-modal.fields.priority')}
                         />
                         <FormControlLabel
                             control={
@@ -158,13 +163,13 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                                     }}
                                 />
                             }
-                            label="Finalizado"
+                            label={t('pages.dashboard.report-modal.fields.finished')}
                         />
                     </div>
                     <div className="flex flex-col col-span-3 justify-around">
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <DatePicker 
-                                label="Data"
+                                label={t('pages.dashboard.report-modal.fields.date')}
                                 format='DD/MM/YYYY' 
                                 value={formData.date}
                                 onChange={(e) => setFormData({ ...formData, date: e || moment() })}
@@ -179,7 +184,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                         {isFinished && (
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <DatePicker 
-                                label="Data de finalização"
+                                label={t('pages.dashboard.report-modal.fields.finish-date')}
                                 defaultValue={moment()} 
                                 format='DD/MM/YYYY' 
                                 value={formData.finishDate}
@@ -195,7 +200,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                         )}
                     </div>
                     <FormControl sx={radioGroupFormControlStyles} className="col-span-4 flex justify-around">
-                        <FormLabel id="workshift-label" sx={formLabelStyles}>Turno</FormLabel>
+                        <FormLabel id="workshift-label" sx={formLabelStyles}>{t('pages.dashboard.report-modal.fields.workshifts.workshift')}</FormLabel>
                         <RadioGroup
                             id="workshift-radiogroup"
                             name="controlled-radio-buttons-group"
@@ -208,9 +213,9 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                                 justifyContent: "space-between"
                             }}
                         >
-                            <FormControlLabel value="1" control={<Radio sx={radioBtnStyles}/>} label="1°" />
-                            <FormControlLabel value="2" control={<Radio sx={radioBtnStyles}/>} label="2°" />
-                            <FormControlLabel value="3" control={<Radio sx={radioBtnStyles}/>} label="3°" />
+                            <FormControlLabel value="1" control={<Radio sx={radioBtnStyles}/>} label={t('pages.dashboard.report-modal.fields.workshifts.first')} />
+                            <FormControlLabel value="2" control={<Radio sx={radioBtnStyles}/>} label={t('pages.dashboard.report-modal.fields.workshifts.second')} />
+                            <FormControlLabel value="3" control={<Radio sx={radioBtnStyles}/>} label={t('pages.dashboard.report-modal.fields.workshifts.third')} />
                         </RadioGroup>
                     </FormControl>
                 </div>
@@ -219,7 +224,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                         id="description"
                         multiline
                         maxRows={4}
-                        label="Descrição" 
+                        label={t('pages.dashboard.report-modal.fields.description')}
                         variant="outlined"
                         required
                         sx={textFieldStyles}
@@ -233,7 +238,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                         id="preventionAction"
                         multiline
                         maxRows={4}
-                        label="O que foi feito para evitar ser um acidente?" 
+                        label={t('pages.dashboard.report-modal.fields.prevention-label')}
                         variant="outlined" 
                         value={formData.preventionAction}
                         onChange={(e) => setFormData({ ...formData, preventionAction: e.target.value })}
@@ -253,7 +258,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                         id="riskAction"
                         multiline
                         maxRows={4}
-                        label="Algo pode ser feito para eliminar o risco?" 
+                        label={t('pages.dashboard.report-modal.fields.risk-label')}
                         variant="outlined" 
                         value={formData.riskAction}
                         onChange={(e) => setFormData({ ...formData, riskAction: e.target.value })}
@@ -271,9 +276,9 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                 </div>
                 <Divider variant="middle" className="bg-white"/>
                 <div className="flex justify-end gap-3 grid-cols-12 px-6">
-                    <button onClick={handleCloseModal} type="button" className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-transparent border border-orange-500 hover:bg-orange-500 text-orange-500 hover:text-white">Cancelar</button>
+                    <button onClick={handleCloseModal} type="button" className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-transparent border border-orange-500 hover:bg-orange-500 text-orange-500 hover:text-white">{t('pages.dashboard.report-modal.buttons.cancel')}</button>
                     <button type="submit" className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-orange-500 hover:bg-orange-700 text-white">
-                        {relatorio && relatorio.id ? 'Editar': 'Salvar'}
+                        {relatorio && relatorio.id ? t('pages.dashboard.report-modal.buttons.edit') : t('pages.dashboard.report-modal.buttons.save')}
                     </button>
                 </div>
             </form>

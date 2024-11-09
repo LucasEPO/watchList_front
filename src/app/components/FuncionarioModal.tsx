@@ -4,6 +4,8 @@ import Modal from 'react-modal';
 import FuncionarioModalController from "../controllers/FuncionarioModalController";
 import { Divider, TextField } from "@mui/material";
 import { textFieldStyles } from "../styles/textFieldStyles";
+import { useAlert } from "../contexts/AlertContext";
+import useTranslation from "next-translate/useTranslation";
 
 interface FuncionarioModalProps {
     isOpen: boolean;
@@ -13,6 +15,10 @@ interface FuncionarioModalProps {
 };
 
 const FuncionarioModal: React.FC<FuncionarioModalProps> = ({ isOpen, onClose, handleRefresh, funcionario }) => {
+    const { t } = useTranslation('commom');
+
+    const { showAlert } = useAlert();
+
     const {
         formData,
         setFormData,
@@ -38,14 +44,14 @@ const FuncionarioModal: React.FC<FuncionarioModalProps> = ({ isOpen, onClose, ha
           overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 backdrop-blur-sm"
         >
             <h1 className="text-start font-extrabold text-lg mb-3">
-                {funcionario && funcionario.name ? `Editar: ${funcionario.name}` : 'Novo Funcionário'}
+            {funcionario && funcionario.name ? `${t('pages.dashboard.employee-modal.title-edit', { name: funcionario.name })}` : `${t('pages.dashboard.employee-modal.title-new')}`}
             </h1>
             <Divider variant="middle" className="bg-white"/>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={(e) => handleSubmit(e, showAlert)}>
                 <div className="grid grid-cols-12 gap-4 mb-3">
                     <TextField 
                         id="name" 
-                        label="Nome" 
+                        label={t('pages.dashboard.employee-modal.fields.name')}
                         variant="outlined" 
                         sx={textFieldStyles} 
                         className="col-span-6" 
@@ -55,7 +61,7 @@ const FuncionarioModal: React.FC<FuncionarioModalProps> = ({ isOpen, onClose, ha
                     />
                     <TextField 
                         id="email" 
-                        label="Email" 
+                        label={t('pages.dashboard.employee-modal.fields.email')}
                         variant="outlined" 
                         sx={textFieldStyles} 
                         className="col-span-6" 
@@ -66,9 +72,9 @@ const FuncionarioModal: React.FC<FuncionarioModalProps> = ({ isOpen, onClose, ha
                 </div>
                 <Divider variant="middle" className="bg-white"/>
                 <div className="flex justify-end gap-3 grid-cols-12 px-6">
-                    <button onClick={handleCloseModal} type="button" className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-transparent border border-orange-500 hover:bg-orange-500 text-orange-500 hover:text-white">Cancelar</button>
+                    <button onClick={handleCloseModal} type="button" className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-transparent border border-orange-500 hover:bg-orange-500 text-orange-500 hover:text-white">{t('pages.dashboard.employee-modal.buttons.cancel')}</button>
                     <button type="submit" className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-orange-500 hover:bg-orange-700 text-white">
-                        {funcionario && funcionario.id ? 'Editar': 'Salvar'}
+                        {funcionario && funcionario.id ? t('pages.dashboard.employee-modal.buttons.edit') : t('pages.dashboard.employee-modal.buttons.save')}
                     </button>
                 </div>
             </form>

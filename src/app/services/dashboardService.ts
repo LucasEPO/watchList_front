@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { CreateFuncionario } from '../models/create-funcionario.interface';
+import { CreateReport } from '../models/create-report.interface';
 
 const API_URL = "http://localhost:3001";
 
@@ -9,14 +10,13 @@ const dashboardService = {
         const token = sessionStorage.getItem('access_token');
 
         if (!id || !token) 
-            throw new Error('Usuário não autenticado ou ID da empresa não encontrado');
+            throw {code: 'ERROR_UNAUTHORIZED', status: 401};
 
         try {
             const response = await axios.get(`${API_URL}/empresas/relatorios/${id}`);
             return response.data;
         } catch (error) {
-            console.error('Erro ao buscar relatórios:', error);
-            return;
+            throw {code: 'ERROR_DATA_SEARCH', status: 500};
         }
     },
 
@@ -30,9 +30,10 @@ const dashboardService = {
 
             return response;
               
-        }catch (error) {
-            alert("Erro ao atualizar o relatorio!")
-            throw error;
+        } catch (error: any) {
+            if (error.response?.status === 404) 
+                throw { code: 'ERROR_NOT_FOUND', status: 404 };
+            throw {code: 'ERROR_UPDATE', status: 500};
         }
     },
 
@@ -46,9 +47,11 @@ const dashboardService = {
 
             return response;
               
-        }catch (error) {
-            alert("Erro ao atualizar o funcionario!")
-            throw error;
+        } catch (error: any) {
+            if (error.response?.status === 404) 
+                throw { code: 'ERROR_NOT_FOUND', status: 404 };
+
+            throw {code: 'ERROR_UPDATE', status: 500};
         }
     },
 
@@ -61,9 +64,10 @@ const dashboardService = {
             });
 
             return response;
-        } catch (error) {
-            alert("Erro ao deletar o relatorio!");
-            throw error;
+        } catch (error: any) {
+            if (error.response?.status === 404) 
+                throw { code: 'ERROR_NOT_FOUND', status: 404 };
+            throw {code: 'ERROR_DELETE', status: 500};
         }
     },
 
@@ -76,9 +80,11 @@ const dashboardService = {
             });
 
             return response;
-        } catch (error) {
-            alert("Erro ao deletar o funcionario!");
-            throw error;
+        } catch (error: any) {
+            if (error.response?.status === 404) 
+                throw { code: 'ERROR_NOT_FOUND', status: 404 };
+
+            throw {code: 'ERROR_DELETE', status: 500};
         }
     },
 
@@ -89,14 +95,16 @@ const dashboardService = {
                     'Content-Type': 'application/json',
                 },
             });
-
-            return response.data;
-        } catch (error) {
-            alert("Erro ao buscar o relatorio!");
-            throw error;
-        }
             
+            return response.data;
+        } catch (error: any) {
+            if (error.response?.status === 404) 
+                throw { code: 'ERROR_NOT_FOUND', status: 404 };
+
+            throw { code: 'ERROR_FETCHING', status: 500 };
+        }
     },
+    
     
     async findEmployee(id: number) {
         try {
@@ -106,10 +114,14 @@ const dashboardService = {
                 },
             });
 
+            if (!response.data) 
+                throw { code: 'ERROR_NOT_FOUND', status: 404 };
+
             return response.data;
-        } catch (error) {
-            alert("Erro ao buscar o funcionario!");
-            throw error;
+        } catch (error: any ) {
+            if (error.response?.status === 404) 
+                throw { code: 'ERROR_NOT_FOUND', status: 404 };
+            throw { code: 'ERROR_FETCHING', status: 500 };
         }
             
     },
@@ -122,10 +134,14 @@ const dashboardService = {
                 },
             });
 
+            if (!response.data) 
+                throw { code: 'ERROR_NOT_FOUND', status: 404 };
+
             return response.data;
-        } catch (error) {
-            alert("Erro ao buscar a empresa!");
-            throw error;
+        } catch (error: any) {
+            if (error.response?.status === 404) 
+                throw { code: 'ERROR_NOT_FOUND', status: 404 };
+            throw {code: 'ERROR_FETCHING', status: 500};
         }
     },
 
@@ -135,7 +151,7 @@ const dashboardService = {
             const token = sessionStorage.getItem('access_token');
     
             if (!id || !token) 
-                throw new Error('Usuário não autenticado ou ID da empresa não encontrado');
+                throw {code: 'ERROR_UNAUTHORIZED', status: 401};
 
             const response = await axios.get(`${API_URL}/empresas/funcionarios/${id}`, {
                 headers: {
@@ -145,8 +161,7 @@ const dashboardService = {
 
             return response.data;
         } catch (error) {
-            alert("Erro ao buscar funcionários!");
-            throw error;
+            throw {code: 'ERROR_DATA_SEARCH', status: 500};
         }
     },
 
@@ -161,8 +176,21 @@ const dashboardService = {
             return response;
 
         }catch (error) {
-            alert("Erro ao criar funcionário!");
-            throw error;
+            throw {code: 'ERROR_CREATE', status: 500};
+        }
+    },
+
+    async createReport(report: CreateReport) {
+        try {
+            const response = await axios.post(`${API_URL}/relatorios`, report, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            return response;
+        } catch (error) {
+            throw {code: 'ERROR_CREATE', status: 500};
         }
     }
 };
