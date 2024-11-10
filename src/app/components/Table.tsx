@@ -23,12 +23,12 @@ interface TableProps {
 }
 
 const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, columnWidths, dataLength, loading, error, onRefresh, onCheckboxChange, onDelete, onToggleModal, onEdit }) => {
-    const { t } = useTranslation('commom');
+    const { t } = useTranslation('common');
 
     let labelBtnNew = '';
-    if(activeTable === "reportes")
+    if(activeTable === "reports")
         labelBtnNew = t('pages.dashboard.tables.header.buttons.add-report');
-    else if(activeTable === "funcionarios")
+    else if(activeTable === "employees")
         labelBtnNew = t('pages.dashboard.tables.header.buttons.add-employee');
         
   return (

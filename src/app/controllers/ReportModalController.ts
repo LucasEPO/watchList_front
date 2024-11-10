@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
-import { Funcionario } from '../models/funcionario.interface.js';
+import { Employee } from '../models/employee.interface.js';
 import moment from 'moment';
-import { Relatorio } from '../models/relatorio.interface.js';
+import { Report } from '../models/report.interface.js';
 import dashboardService from '../services/dashboardService';
 import useTranslation from 'next-translate/useTranslation';
 
@@ -13,8 +13,8 @@ interface AutocompleteOption {
 
 const API_URL = "http://localhost:3001"; 
     
-const RelatorioModalController = (onClose: () => void, handleRefresh: () => void, relatorio: Relatorio | null) => {   
-    const { t } = useTranslation('commom');
+const ReportModalController = (onClose: () => void, handleRefresh: () => void, report: Report | null) => {   
+    const { t } = useTranslation('common');
 
     const [enterpriseId, setEnterpriseId] = React.useState<number | null>(null);
 
@@ -44,29 +44,29 @@ const RelatorioModalController = (onClose: () => void, handleRefresh: () => void
     }, []);
 
     useEffect(() => {
-        if (relatorio && relatorio.id) {
+        if (report && report.id) {
             setFormData({
-                title: relatorio.title || '',
-                department: relatorio.department || '',
-                equipment: relatorio.equipament || '',
-                description: (relatorio.description).toString() || '',
-                preventionAction: relatorio.prevention_action? (relatorio.prevention_action).toString() || '' : '',
-                riskAction: relatorio.risk_action? (relatorio.risk_action).toString() || '' : '',
+                title: report.title || '',
+                department: report.department || '',
+                equipment: report.equipament || '',
+                description: (report.description).toString() || '',
+                preventionAction: report.prevention_action? (report.prevention_action).toString() || '' : '',
+                riskAction: report.risk_action? (report.risk_action).toString() || '' : '',
                 enterpriseId: enterpriseId,
-                employeeId: relatorio.funcionario?.id || null,
-                date: relatorio.date ? moment(relatorio.date) : moment(),
-                finishDate: relatorio.finished_date ? moment(relatorio.finished_date) : null,
+                employeeId: report.funcionario?.id || null,
+                date: report.date ? moment(report.date) : moment(),
+                finishDate: report.finished_date ? moment(report.finished_date) : null,
             });
-            setIsFinished(relatorio.is_finished || false);
-            setIsPriority(relatorio.is_priority || false);
-            setWorkshift(relatorio.workshift || '1');
+            setIsFinished(report.is_finished || false);
+            setIsPriority(report.is_priority || false);
+            setWorkshift(report.workshift || '1');
         } else {
             setFormData(initialFormData);
         }
 
-    }, [relatorio, options]);
+    }, [report]);
 
-    const fetchEnterpriseId = () => {
+    const fetchCompanyId = () => {
         if (typeof window !== 'undefined') {
             const id = sessionStorage.getItem("empresa_id");
             setEnterpriseId(id ? +id : null);
@@ -89,8 +89,8 @@ const RelatorioModalController = (onClose: () => void, handleRefresh: () => void
         let response;
         try {
 
-            if (relatorio && relatorio.id) {
-                response = await dashboardService.updateRelatorio(relatorio.id, {
+            if (report && report.id) {
+                response = await dashboardService.updateReport(report.id, {
                     ...formData,
                     is_priority: isPriority,
                     is_finished: isFinished,
@@ -166,7 +166,7 @@ const RelatorioModalController = (onClose: () => void, handleRefresh: () => void
             if (!empresaId) throw {code: 'ERROR_COMPANY_NOT_FOUND'};
 
             const response = await axios.get(`${API_URL}/funcionarios/empresa/${empresaId}`);
-            setOptions(response.data.map((funcionario: Funcionario) => ({
+            setOptions(response.data.map((funcionario: Employee) => ({
                 id: funcionario.id,
                 name: funcionario.name,
             })));
@@ -210,8 +210,8 @@ const RelatorioModalController = (onClose: () => void, handleRefresh: () => void
         handlePriorityChange,
         handleFinishedChange,
         handleAutocompleteOpen,
-        fetchEnterpriseId,
+        fetchCompanyId,
     };
 };
 
-export default RelatorioModalController;
+export default ReportModalController;

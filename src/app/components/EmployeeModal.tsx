@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { Funcionario } from "../models/funcionario.interface";
+import { Employee } from "../models/employee.interface";
 import Modal from 'react-modal';
-import FuncionarioModalController from "../controllers/FuncionarioModalController";
+import EmployeeModalController from "../controllers/EmployeeModalController";
 import { Divider, TextField } from "@mui/material";
 import { textFieldStyles } from "../styles/textFieldStyles";
 import { useAlert } from "../contexts/AlertContext";
@@ -11,12 +11,11 @@ interface FuncionarioModalProps {
     isOpen: boolean;
     onClose: () => void;
     handleRefresh: () => void;
-    funcionario: Funcionario | null;
+    employee: Employee | null;
 };
 
-const FuncionarioModal: React.FC<FuncionarioModalProps> = ({ isOpen, onClose, handleRefresh, funcionario }) => {
-    const { t } = useTranslation('commom');
-
+const EmployeeModal: React.FC<FuncionarioModalProps> = ({ isOpen, onClose, handleRefresh, employee }) => {
+    const { t } = useTranslation('common');
     const { showAlert } = useAlert();
 
     const {
@@ -24,27 +23,27 @@ const FuncionarioModal: React.FC<FuncionarioModalProps> = ({ isOpen, onClose, ha
         setFormData,
         handleCloseModal,
         handleSubmit,
-        fetchEnterpriseId,
-    } = FuncionarioModalController(onClose, handleRefresh, funcionario);
+        fetchCompanyId,
+    } = EmployeeModalController(onClose, handleRefresh, employee);
 
     useEffect(() => {
         Modal.setAppElement('main');
     }, []);
 
     useEffect(() => {
-        fetchEnterpriseId();
+        fetchCompanyId();
     }, []);
 
     return(
         <Modal
-          isOpen={isOpen}
-          onRequestClose={handleCloseModal}
-          contentLabel="Formulário"
-          className="fixed grid top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-gray-700 p-8 rounded-lg max-w-2xl w-full"
-          overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 backdrop-blur-sm"
+            isOpen={isOpen}
+            onRequestClose={handleCloseModal}
+            contentLabel="Formulário"
+            className="fixed grid top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-gray-700 p-8 rounded-lg max-w-2xl w-full"
+            overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 backdrop-blur-sm"
         >
             <h1 className="text-start font-extrabold text-lg mb-3">
-            {funcionario && funcionario.name ? `${t('pages.dashboard.employee-modal.title-edit', { name: funcionario.name })}` : `${t('pages.dashboard.employee-modal.title-new')}`}
+                {employee && employee.name ? `${t('pages.dashboard.employee-modal.title-edit', { name: employee.name })}` : `${t('pages.dashboard.employee-modal.title-new')}`}
             </h1>
             <Divider variant="middle" className="bg-white"/>
             <form onSubmit={(e) => handleSubmit(e, showAlert)}>
@@ -72,15 +71,23 @@ const FuncionarioModal: React.FC<FuncionarioModalProps> = ({ isOpen, onClose, ha
                 </div>
                 <Divider variant="middle" className="bg-white"/>
                 <div className="flex justify-end gap-3 grid-cols-12 px-6">
-                    <button onClick={handleCloseModal} type="button" className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-transparent border border-orange-500 hover:bg-orange-500 text-orange-500 hover:text-white">{t('pages.dashboard.employee-modal.buttons.cancel')}</button>
-                    <button type="submit" className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-orange-500 hover:bg-orange-700 text-white">
-                        {funcionario && funcionario.id ? t('pages.dashboard.employee-modal.buttons.edit') : t('pages.dashboard.employee-modal.buttons.save')}
+                    <button 
+                        onClick={handleCloseModal} 
+                        type="button" 
+                        className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-transparent border border-orange-500 hover:bg-orange-500 text-orange-500 hover:text-white"
+                    >
+                        {t('pages.dashboard.employee-modal.buttons.cancel')}
+                    </button>
+                    <button 
+                        type="submit" 
+                        className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-orange-500 hover:bg-orange-700 text-white"
+                    >
+                        {employee && employee.id ? t('pages.dashboard.employee-modal.buttons.edit') : t('pages.dashboard.employee-modal.buttons.save')}
                     </button>
                 </div>
             </form>
-
         </Modal>
     );
 };
 
-export default FuncionarioModal;
+export default EmployeeModal;

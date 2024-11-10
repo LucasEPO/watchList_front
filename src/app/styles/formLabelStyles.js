@@ -7,6 +7,6 @@ export const formLabelStyles = {
     padding: '0 4px',
     color: '#FBBF24',
     '&.Mui-focused': {
-        color: '#FBBF24', // or any other color you want
+        color: '#FBBF24',
     },
 }

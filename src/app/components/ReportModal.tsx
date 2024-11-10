@@ -10,8 +10,8 @@ import { radioGroupFormControlStyles } from '../styles/radioGroupFormControlStyl
 import { formLabelStyles } from '../styles/formLabelStyles.js';
 import moment from 'moment';
 import { HiOutlineStar, HiStar } from 'react-icons/hi2';
-import RelatorioModalController from '../controllers/RelatorioModalController';
-import { Relatorio } from '../models/relatorio.interface.js';
+import ReportModalController from '../controllers/ReportModalController';
+import { Report } from '../models/report.interface';
 import { useAlert } from '../contexts/AlertContext';
 import useTranslation from 'next-translate/useTranslation';
 
@@ -19,11 +19,11 @@ interface RelatorioModalProps {
     isOpen: boolean;
     onClose: () => void;
     handleRefresh: () => void;
-    relatorio: Relatorio | null;
+    report: Report | null;
 }
 
-const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handleRefresh, relatorio }) => {
-    const { t } = useTranslation('commom');
+const ReportModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handleRefresh, report }) => {
+    const { t } = useTranslation('common');
     const { showAlert } = useAlert();
 
     const {
@@ -42,15 +42,15 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
         handlePriorityChange,
         handleFinishedChange,
         handleAutocompleteOpen,
-        fetchEnterpriseId,
-    } = RelatorioModalController(onClose, handleRefresh, relatorio);
+        fetchCompanyId,
+    } = ReportModalController(onClose, handleRefresh, report);
 
     useEffect(() => {
         Modal.setAppElement('main');
     }, []);
 
     useEffect(() => {
-        fetchEnterpriseId();
+        fetchCompanyId();
     }, []);
 
     return (
@@ -62,7 +62,7 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
           overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-40 backdrop-blur-sm"
         >
             <h1 className="text-start font-extrabold text-lg mb-3">
-                {relatorio && relatorio.title ? `${t('pages.dashboard.report-modal.title-edit', { title: relatorio.title })}` : `${t('pages.dashboard.report-modal.title-new')}`}
+                {report && report.title ? `${t('pages.dashboard.report-modal.title-edit', { title: report.title })}` : `${t('pages.dashboard.report-modal.title-new')}`}
             </h1>
             <Divider variant="middle" className="bg-white"/>
             <form onSubmit={(e) => handleSubmit(e, showAlert)}>
@@ -276,9 +276,15 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
                 </div>
                 <Divider variant="middle" className="bg-white"/>
                 <div className="flex justify-end gap-3 grid-cols-12 px-6">
-                    <button onClick={handleCloseModal} type="button" className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-transparent border border-orange-500 hover:bg-orange-500 text-orange-500 hover:text-white">{t('pages.dashboard.report-modal.buttons.cancel')}</button>
+                    <button 
+						onClick={handleCloseModal} 
+						type="button" 
+						className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-transparent border border-orange-500 hover:bg-orange-500 text-orange-500 hover:text-white"
+					>
+						{t('pages.dashboard.report-modal.buttons.cancel')}
+					</button>
                     <button type="submit" className="mt-3 rounded-md px-4 py-2 font-bold text-xl bg-orange-500 hover:bg-orange-700 text-white">
-                        {relatorio && relatorio.id ? t('pages.dashboard.report-modal.buttons.edit') : t('pages.dashboard.report-modal.buttons.save')}
+                        {report && report.id ? t('pages.dashboard.report-modal.buttons.edit') : t('pages.dashboard.report-modal.buttons.save')}
                     </button>
                 </div>
             </form>
@@ -286,4 +292,4 @@ const RelatorioModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handle
     );
 };
 
-export default RelatorioModal;
+export default ReportModal;

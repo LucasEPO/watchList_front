@@ -2,13 +2,13 @@ import useTranslation from 'next-translate/useTranslation';
 import { FaExclamation, FaSearch } from 'react-icons/fa';
 
 interface TableAlertProps {
-  error: string | null;
-  loading: boolean;
-  dataLength: number;
+    error: string | null;
+    loading: boolean;
+    dataLength: number;
 }
 
 const TableAlert: React.FC<TableAlertProps> = ({ error, loading, dataLength }) => {
-    const { t } = useTranslation('commom');
+    const { t } = useTranslation('common');
 
     if (loading) {
         return (

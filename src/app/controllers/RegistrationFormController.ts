@@ -1,11 +1,11 @@
 import React, { FormEvent } from "react";
 import authService from "../services/authService";
-import { CreateEmpresa } from "../models/create-empresa.interface";
+import { CreateCompany } from "../models/create-company.interface";
 import { useRouter } from "next/navigation";
 import useTranslation from "next-translate/useTranslation";
 
 const RegistrationFormController = () => {
-    const { t } = useTranslation("commom");
+    const { t } = useTranslation("common");
     const router = useRouter(); 
     const initialRegistrationFormData = {
         name: '',
@@ -32,7 +32,7 @@ const RegistrationFormController = () => {
             return;
         }
         setPassError(false);
-        const newCompany: CreateEmpresa = {
+        const newCompany: CreateCompany = {
             name: formData.name,
             login: formData.login,
             pass_hash: formData.password,

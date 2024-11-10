@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import dashboardService from "../services/dashboardService";
-import { Relatorio } from '../models/relatorio.interface';
-import { Funcionario } from '../models/funcionario.interface';
+import { Report } from '../models/report.interface';
+import { Employee } from '../models/employee.interface';
 import useTranslation from 'next-translate/useTranslation';
 import { useAlert } from '../contexts/AlertContext';
 
 const DashboardController = () => {
-    const { t } = useTranslation('commom');
+    const { t } = useTranslation('common');
     const { showAlert } = useAlert();
 
     const tableReportsHeaders = [
@@ -23,17 +23,17 @@ const DashboardController = () => {
         t('pages.dashboard.employee-table.columns.actions'),
     ];
     const employeesColumnWidths = ["42.5%", "42.5%", "15%"];
-    const [relatorioModalOpen, setRelatorioModalOpen] = useState(false);
-    const [funcionarioModalOpen, setFuncionarioOpen] = useState(false);
-    const [relatorio, setRelatorio] = useState<Relatorio | null>(null);
-    const [funcionario, setFuncionario] = useState<Funcionario | null>(null);
-    const [activeTable, setActiveTable] = useState('reportes');
+    const [reportModalOpen, setReportModalOpen] = useState(false);
+    const [employeeModalOpen, setEmployeeOpen] = useState(false);
+    const [report, setReport] = useState<Report | null>(null);
+    const [employee, setFuncionario] = useState<Employee | null>(null);
+    const [activeTable, setActiveTable] = useState<'reports' | 'employees'>('reports');
 
     const getReportsTableData = async () => {
         try {
             const data = await dashboardService.getReportData();
     
-            const formattedData = data.map((report: Relatorio ) => {
+            const formattedData = data.map((report: Report ) => {
               return {
                 id: report.id,
                 title: report.title,
@@ -66,7 +66,7 @@ const DashboardController = () => {
         try {
             const data = await dashboardService.getAllEmployees();
     
-            const formattedData = data.map((employee: Funcionario  ) => {
+            const formattedData = data.map((employee: Employee  ) => {
                 return {
                     id: employee.id,
                     name: employee.name,
@@ -123,7 +123,7 @@ const DashboardController = () => {
                 }
             };
       
-            if(activeTable === 'reportes')
+            if(activeTable === 'reports')
                 loadReportsData(); 
             else
                 loadEmployeesData();
@@ -143,7 +143,7 @@ const DashboardController = () => {
         setLoading(true);
         try {
             let formattedData;
-            if(activeTable === 'reportes'){
+            if(activeTable === 'reports'){
                 formattedData = await getReportsTableData();
             } else {
                 formattedData = await getEmployeesTableData();
@@ -161,41 +161,41 @@ const DashboardController = () => {
         }
     };
 
-    const updateCheckboxRelatorio = async (id: number, field: string, value: boolean) => {
+    const updateCheckboxReport = async (id: number, field: string, value: boolean) => {
         const update = {[field]: value};
-        const response = await dashboardService.updateRelatorio(id, update);
+        const response = await dashboardService.updateReport(id, update);
         return response;
     };
 
     const deleteRow = async (id: number, activeTable: string) => {
         let response;
 
-        if(activeTable === 'reportes')
-            response = await dashboardService.deleteRelatorio(id);
+        if(activeTable === 'reports')
+            response = await dashboardService.deleteReport(id);
         else
             response = await dashboardService.deleteEmployee(id);
         return response;
         
     };
     
-    const toggleRelatorioModal = (relatorio?: Relatorio) => {
-        if(relatorio)
-            setRelatorio(relatorio);
+    const toggleReportModal = (report?: Report) => {
+        if(report)
+            setReport(report);
         
-        setRelatorioModalOpen(!relatorioModalOpen);
+        setReportModalOpen(!reportModalOpen);
     };
 
-    const toggleFuncionarioModal = (funcionario?: Funcionario) => {
-        if(funcionario)
-            setFuncionario(funcionario);
+    const toggleEmployeeModal = (employee?: Employee) => {
+        if(employee)
+            setFuncionario(employee);
         
-        setFuncionarioOpen(!funcionarioModalOpen);
+        setEmployeeOpen(!employeeModalOpen);
     };
 
     const updateRow = async (id:number, updates: object, activeTable: string) => {
         let response;
-        if(activeTable === 'reportes')
-            response = await dashboardService.updateRelatorio(id, updates);
+        if(activeTable === 'reports')
+            response = await dashboardService.updateReport(id, updates);
         else
             response = await dashboardService.updateEmployee(id, updates);
         
@@ -204,24 +204,24 @@ const DashboardController = () => {
     }
 
     return {
-        relatorioModalOpen,
-        funcionarioModalOpen,
-        setFuncionarioOpen,
-        setRelatorioModalOpen,
+        reportModalOpen,
+        employeeModalOpen,
+        setEmployeeOpen,
+        setReportModalOpen,
         activeTable,
         setActiveTable,
-        relatorio,
-        funcionario,
+        report,
+        employee,
         tableReportsHeaders,
         reportsColumnWidths,
         tableEmployeesHeaders,
         employeesColumnWidths,
         useTableData,
         refreshTableData,
-        updateCheckboxRelatorio,
+        updateCheckboxReport,
         deleteRow,
-        toggleRelatorioModal,
-        toggleFuncionarioModal,
+        toggleReportModal,
+        toggleEmployeeModal,
         updateRow,
     };
 }

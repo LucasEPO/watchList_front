@@ -3,7 +3,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { FiEdit, FiEye, FiTrash } from 'react-icons/fi';
 import { HiOutlineStar, HiStar } from 'react-icons/hi2';
 import dashboardService from '../services/dashboardService';
-import { Relatorio } from '../models/relatorio.interface';
+import { Report } from '../models/report.interface';
 import { useAlert } from '../contexts/AlertContext';
 import useTranslation from 'next-translate/useTranslation';
 
@@ -32,7 +32,7 @@ type TableRowProps = {
     onCheckboxChange: (id: number, field: string, value: boolean) => Promise<void>;
     onDelete: (id: number, activeTable:string) => Promise<void>;
     onEdit: (id: number, updates: object, activeTable: string) => Promise<void>; 
-    onToggleModal: (relatorio: Relatorio) => void; 
+    onToggleModal: (relatorio: Report) => void; 
 };
 
 interface Column<T> {
@@ -42,7 +42,7 @@ interface Column<T> {
 }
   
 const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, onCheckboxChange, onDelete, onEdit, onToggleModal}) => {
-    const { t } = useTranslation('commom');
+    const { t } = useTranslation('common');
     const { showAlert } = useAlert();
 
     const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +51,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
 
     const handleDelete= () => {
         let confirmMessage = '';
-        if(activeTable === 'reportes')
+        if(activeTable === 'reports')
             confirmMessage = `${t('pages.dashboard.tables.alerts.report.delete', {title: (item as RelatorioItem).title})}`;
         else
             confirmMessage = `${t('pages.dashboard.tables.alerts.employee.delete',{name: (item as EmployeeItem).name})}`;
@@ -59,7 +59,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
         if (window.confirm(confirmMessage)) {
             onDelete(item.id, activeTable);
             let successMessage = '';
-            if(activeTable === 'reportes')
+            if(activeTable === 'reports')
                 successMessage = `${t('pages.dashboard.tables.alerts.report.delete-success', {title: (item as RelatorioItem).title})}`;
             else
                 successMessage = `${t('pages.dashboard.tables.alerts.employee.delete-success',{name: (item as EmployeeItem).name})}`;
@@ -70,23 +70,24 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
 
     const handleEdit = async () => {
         try{
-            if(activeTable === 'reportes'){
+            if(activeTable === 'reports'){
                 const relatorio = await dashboardService.findRelatorio(item.id);
             
                 if(relatorio)
                     onToggleModal(relatorio);
-        }else {
-            const funcionario = await dashboardService.findEmployee(item.id);
-            
-            if(funcionario)
-                onToggleModal(funcionario);
-        }
+                
+            }else {
+                const funcionario = await dashboardService.findEmployee(item.id);
+                
+                if(funcionario)
+                    onToggleModal(funcionario);
+            }
         } catch (error: any) {
             let errorMessage = '';
 
             switch (error.code) {
                 case 'ERROR_NOT_FOUND':
-                    if(activeTable  === 'reportes')
+                    if(activeTable  === 'reports')
                         errorMessage = `${t('pages.dashboard.tables.alerts.report.error-id', {id:item.id})}`;
                     else
                         errorMessage = `${t('pages.dashboard.tables.alerts.employee.error-id', {id:item.id})}`;
@@ -94,7 +95,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
                     break;
                 case 'ERROR_FETCHING':
                 default:
-                    if(activeTable  === 'reportes')
+                    if(activeTable  === 'reports')
                         errorMessage = t('pages.dashboard.service-alerts.reports.find-one');
                     else
                         errorMessage = t('pages.dashboard.service-alerts.employees.find-one');
@@ -179,7 +180,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
     ];
 
     let columns;
-    if (activeTable === 'reportes') {
+    if (activeTable === 'reports') {
         columns = reportColumns;
     } else {
         columns = employeeColumns;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CreateFuncionario } from '../models/create-funcionario.interface';
+import { CreateEmployee } from '../models/create-employee.interface';
 import { CreateReport } from '../models/create-report.interface';
 
 const API_URL = "http://localhost:3001";
@@ -20,7 +20,7 @@ const dashboardService = {
         }
     },
 
-    async updateRelatorio(id: number, updates: object) {
+    async updateReport(id: number, updates: object) {
         try{
             const response = await axios.patch(`${API_URL}/relatorios/${id}`, updates, { 
                 headers: {
@@ -55,7 +55,7 @@ const dashboardService = {
         }
     },
 
-    async deleteRelatorio(id: number) {
+    async deleteReport(id: number) {
         try {
             const response = await axios.delete(`${API_URL}/relatorios/${id}`, {
                 headers: {
@@ -165,7 +165,7 @@ const dashboardService = {
         }
     },
 
-    async createEmployee(funcionario: CreateFuncionario) {
+    async createEmployee(funcionario: CreateEmployee) {
         try {
             const response = await axios.post(`${API_URL}/funcionarios`, funcionario, {
                 headers: {

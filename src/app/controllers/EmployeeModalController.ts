@@ -1,33 +1,33 @@
 import React, { useEffect } from "react";
-import { Funcionario } from "../models/funcionario.interface";
+import { Employee } from "../models/employee.interface";
 import dashboardService from "../services/dashboardService";
-import { CreateFuncionario } from "../models/create-funcionario.interface";
+import { CreateEmployee } from "../models/create-employee.interface";
 import useTranslation from "next-translate/useTranslation";
 
-const FuncionarioModalController = (onClose: () => void, handleRefresh: () => void, funcionario: Funcionario | null) => {   
-    const { t } = useTranslation("commom");
+const EmployeeModalController = (onClose: () => void, handleRefresh: () => void, employee: Employee | null) => {   
+    const { t } = useTranslation("common");
 
-    const [enterpriseId, setEnterpriseId] = React.useState<number | null>(null);
+    const [companyId, setCompanyId] = React.useState<number | null>(null);
     const initialFormData = {
         name: '',
         email: '',
-        enterpriseId: enterpriseId,
+        companyId: companyId,
     };
 
     const [formData, setFormData] = React.useState(initialFormData);
 
     useEffect(() => {
-        if (funcionario && funcionario.id) {
+        if (employee && employee.id) {
             setFormData({
-                name: funcionario.name || '',
-                email: funcionario.email || '',
-                enterpriseId: enterpriseId,
+                name: employee.name || '',
+                email: employee.email || '',
+                companyId: companyId,
             });
         } else {
             setFormData(initialFormData);
         }
 
-    }, [funcionario]);
+    }, [employee]);
 
     const resetFormData = () => {
         setFormData(initialFormData);
@@ -38,10 +38,10 @@ const FuncionarioModalController = (onClose: () => void, handleRefresh: () => vo
         onClose();
     };
 
-    const fetchEnterpriseId = () => {
+    const fetchCompanyId = () => {
         if (typeof window !== 'undefined') {
             const id = sessionStorage.getItem("empresa_id");
-            setEnterpriseId(id ? +id : null);
+            setCompanyId(id ? +id : null);
         }
     };
 
@@ -50,20 +50,20 @@ const FuncionarioModalController = (onClose: () => void, handleRefresh: () => vo
 
         let response;
         try {
-            if (funcionario && funcionario.id) {
-                response = await dashboardService.updateEmployee(funcionario.id, formData);
+            if (employee && employee.id) {
+                response = await dashboardService.updateEmployee(employee.id, formData);
                 showAlert("success", t('pages.dashboard.employee-modal.alerts.update-success'));
 
             } else {
 
-                if(!enterpriseId)
+                if(!companyId)
                     throw {code: 'ERROR_COMPANY_NOT_FOUND', status: 404};
 
-                const funcionario: CreateFuncionario = {
+                const employee: CreateEmployee = {
                     ...formData,
-                    empresa: enterpriseId,
+                    empresa: companyId,
                 };
-                response = await dashboardService.createEmployee(funcionario);
+                response = await dashboardService.createEmployee(employee);
                 showAlert("success", t('pages.dashboard.employee-modal.alerts.create-success'));
             }
             handleRefresh();
@@ -95,8 +95,8 @@ const FuncionarioModalController = (onClose: () => void, handleRefresh: () => vo
         setFormData,
         handleCloseModal,
         handleSubmit,
-        fetchEnterpriseId,
+        fetchCompanyId,
     }
 };
 
-export default FuncionarioModalController;
+export default EmployeeModalController;
