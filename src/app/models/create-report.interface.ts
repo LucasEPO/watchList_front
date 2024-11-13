@@ -1,3 +1,4 @@
+import moment from 'moment';
 export interface CreateReport {
     title: string;
     department: string | null;
@@ -8,8 +9,8 @@ export interface CreateReport {
     workshift: string;
     enterpriseId: number | null; 
     employeeId: number | null;    
-    date: Date;
-    finishDate: Date | null;
+    date: moment.Moment;
+    finishDate:  moment.Moment | null;
     isFinished: boolean;
     isPriority: boolean;
 }

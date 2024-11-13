@@ -105,7 +105,6 @@ const dashboardService = {
         }
     },
     
-    
     async findEmployee(id: number) {
         try {
             const response = await axios.get(`${API_URL}/funcionarios/${id}`, {
@@ -153,7 +152,7 @@ const dashboardService = {
             if (!id || !token) 
                 throw {code: 'ERROR_UNAUTHORIZED', status: 401};
 
-            const response = await axios.get(`${API_URL}/empresas/funcionarios/${id}`, {
+            const response = await axios.get(`${API_URL}/funcionarios/empresa/${id}`, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

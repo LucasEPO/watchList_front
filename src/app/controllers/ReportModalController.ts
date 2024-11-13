@@ -10,8 +10,6 @@ interface AutocompleteOption {
     id: number;
     name: string;
 }
-
-const API_URL = "http://localhost:3001"; 
     
 const ReportModalController = (onClose: () => void, handleRefresh: () => void, report: Report | null) => {   
     const { t } = useTranslation('common');
@@ -106,13 +104,7 @@ const ReportModalController = (onClose: () => void, handleRefresh: () => void, r
                 if(!enterpriseId)
                     throw {code: 'ERROR_COMPANY_NOT_FOUND', status: 404};
                 
-
-                response = await axios.post(`${API_URL}/relatorios`, {
-                    ...formData,
-                    isPriority,
-                    isFinished,
-                    workshift,
-                });
+                response = await dashboardService.createReport({...formData, isPriority, isFinished, workshift})
 
                 showAlert("success", t('pages.dashboard.report-modal.alerts.create-success'));
             }
@@ -165,9 +157,10 @@ const ReportModalController = (onClose: () => void, handleRefresh: () => void, r
         try {
             const empresaId = sessionStorage.getItem("empresa_id");
             if (!empresaId) throw {code: 'ERROR_COMPANY_NOT_FOUND'};
+        
+            const response = await dashboardService.getAllEmployees(); 
 
-            const response = await axios.get(`${API_URL}/funcionarios/empresa/${empresaId}`);
-            setOptions(response.data.map((employee: Employee) => ({
+            setOptions(response.map((employee: Employee) => ({
                 id: employee.id,
                 name: employee.name,
             })));
@@ -193,7 +186,6 @@ const ReportModalController = (onClose: () => void, handleRefresh: () => void, r
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setWorkshift((event.target as HTMLInputElement).value);
     };
-
 
     return {
         autocompleteOpen,
