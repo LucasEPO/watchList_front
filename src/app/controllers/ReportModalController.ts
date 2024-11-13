@@ -94,6 +94,7 @@ const ReportModalController = (onClose: () => void, handleRefresh: () => void, r
                     ...formData,
                     is_priority: isPriority,
                     is_finished: isFinished,
+                    workshift: workshift,
                     equipament: formData.equipment,
                     prevention_action: formData.preventionAction,
                     risk_action: formData.riskAction,
@@ -166,9 +167,9 @@ const ReportModalController = (onClose: () => void, handleRefresh: () => void, r
             if (!empresaId) throw {code: 'ERROR_COMPANY_NOT_FOUND'};
 
             const response = await axios.get(`${API_URL}/funcionarios/empresa/${empresaId}`);
-            setOptions(response.data.map((funcionario: Employee) => ({
-                id: funcionario.id,
-                name: funcionario.name,
+            setOptions(response.data.map((employee: Employee) => ({
+                id: employee.id,
+                name: employee.name,
             })));
         } catch (error:any) {
             let errorMessage = '';

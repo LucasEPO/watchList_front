@@ -88,7 +88,7 @@ const dashboardService = {
         }
     },
 
-    async findRelatorio(id: number) {
+    async findReport(id: number) {
         try {
             const response = await axios.get(`${API_URL}/relatorios/${id}`, {
                 headers: {

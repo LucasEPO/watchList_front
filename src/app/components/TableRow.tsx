@@ -71,7 +71,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
     const handleEdit = async () => {
         try{
             if(activeTable === 'reports'){
-                const relatorio = await dashboardService.findRelatorio(item.id);
+                const relatorio = await dashboardService.findReport(item.id);
             
                 if(relatorio)
                     onToggleModal(relatorio);
