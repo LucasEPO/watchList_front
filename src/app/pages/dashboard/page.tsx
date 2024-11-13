@@ -1,7 +1,7 @@
 'use client';
 
 import ExpansiveButton from '@/app/components/ExpansiveButton';
-import { FiLogOut, FiSettings } from 'react-icons/fi';
+import { FiLogOut } from 'react-icons/fi';
 import DashboardController from '@/app/controllers/DashboardController';
 import Table from '@/app/components/Table';
 import ReportModal from '@/app/components/ReportModal';
@@ -48,7 +48,9 @@ export default function Dashboard() {
 		setTableData, 
 		setLoading, 
 		setError, 
-		setDataLength
+		setDataLength,
+		sortTableData,
+		sortConfig,
 	} = useTableData(activeTable);
 
 	const handleRefresh = () => {
@@ -180,6 +182,8 @@ export default function Dashboard() {
 						onDelete={handleDelete}
 						onEdit={handleUpdateRow}
 						onToggleModal={toggleReportModal}
+						onSort={sortTableData}
+						sortConfig={sortConfig}
 					/>
 				}
 				{activeTable === 'employees' &&
@@ -197,6 +201,8 @@ export default function Dashboard() {
 						onDelete={handleDelete}
 						onEdit={handleUpdateRow}
 						onToggleModal={toggleEmployeeModal}
+						onSort={sortTableData}
+						sortConfig={sortConfig}
 					/>
 				}
 				<ReportModal 

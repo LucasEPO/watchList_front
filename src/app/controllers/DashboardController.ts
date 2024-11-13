@@ -34,17 +34,21 @@ const DashboardController = () => {
             const data = await dashboardService.getReportData();
     
             const formattedData = data.map((report: Report ) => {
-              return {
-                id: report.id,
-                title: report.title,
-                is_finished: report.is_finished ? true : false,
-                is_priority: report.is_priority ? true : false,
-                create_date: report.create_date,
-                funcionario: report.funcionario ? { name: report.funcionario.name } : null,
-              };
+                return {
+                    id: report.id,
+                    title: report.title,
+                    is_finished: report.is_finished ? true : false,
+                    is_priority: report.is_priority ? true : false,
+                    date: report.date,
+                    funcionario: report.funcionario ? { name: report.funcionario.name } : null,
+                };
+            });
+
+            const sortedData = formattedData.sort((a: Report, b: Report) => {
+                return a.is_priority === b.is_priority ? 0 : a.is_priority ? -1 : 1;
             });
         
-            return formattedData;
+            return sortedData;
         } catch (error: any) {
             let errorMessage = '';
 
@@ -97,6 +101,7 @@ const DashboardController = () => {
         const [loading, setLoading] = useState<boolean>(true);
         const [error, setError] = useState<string | null>(null);
         const [dataLength, setDataLength] = useState<number>(0);
+        const [sortConfig, setSortConfig] = useState<{ column: string; direction: 'asc' | 'desc' } | null>(null);
       
         useEffect(() => {
             const loadReportsData = async () => {
@@ -128,8 +133,84 @@ const DashboardController = () => {
             else
                 loadEmployeesData();
         }, [activeTable]);
+
+        const sortTableData = (keyIndex: number) => {
+            let sortableColumns;
+            if (activeTable === 'reports') {
+                if(keyIndex > 3) return;
+                sortableColumns = ['title', 'creator', 'date', 'is_finished'];
+            } else {
+                if(keyIndex > 1) return;
+                sortableColumns = ['name', 'email'];
+            }
+
+            let column = sortableColumns[keyIndex];
+
+            let direction: 'asc' | 'desc' | null = 'asc';
+            if (sortConfig && sortConfig.column === column) {
+                if (sortConfig.direction === 'asc') 
+                    direction = 'desc';
+                else if (sortConfig.direction === 'desc') 
+                    direction = null;
+                
+            }
+            
+            let sortedData;
+
+            if (direction) {            
+                sortedData = [...tableData].sort((a, b) => {
+            
+                    if (column === 'date') {
+                        return direction === 'asc' 
+                            ? new Date(a[column]).getTime() - new Date(b[column]).getTime()
+                            : new Date(b[column]).getTime() - new Date(a[column]).getTime();
+                    }
+            
+                    if (column === 'creator') {
+                        const nameA = a.funcionario ? a.funcionario.name : '';
+                        const nameB = b.funcionario ? b.funcionario.name : '';
+            
+                        if (nameA < nameB) {
+                            return direction === 'asc' ? -1 : 1;
+                        }
+                        if (nameA > nameB) {
+                            return direction === 'asc' ? 1 : -1;
+                        }
+                        return 0;
+                    }
+            
+                    if (a[column] < b[column]) {
+                        return direction === 'asc' ? -1 : 1;
+                    }
+            
+                    if (a[column] > b[column]) {
+                        return direction === 'asc' ? 1 : -1;
+                    }
+            
+                    return 0;
+                });
+            } else {
+                sortedData = [...tableData].sort((a: Report, b: Report) => {
+                    return a.is_priority === b.is_priority ? 0 : a.is_priority ? -1 : 1;
+                });
+            }
+        
+            setSortConfig(direction ? { column, direction } : null);
+            setTableData(sortedData); 
+        };
       
-        return { tableData, dataLength, loading, error, setTableData, setLoading, setError, setDataLength };
+        return { 
+            tableData,
+            dataLength,
+            loading, 
+            error, 
+            setTableData, 
+            setLoading, 
+            setError, 
+            setDataLength, 
+            sortTableData,
+            sortConfig,
+        };
     };
 
     const refreshTableData = async (

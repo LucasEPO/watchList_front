@@ -20,9 +20,11 @@ interface TableProps {
     onCheckboxChange: (id: number, field: string, value: boolean)  => Promise<void>;
     onDelete: (id:number, activeTable: string) => Promise<void>;
     onEdit: (id: number, updates: object, activeTable: string) => Promise<void>;
+    onSort: (key: number) => void;
+    sortConfig: { column: string; direction: 'asc' | 'desc' | null } | null;
 }
 
-const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, columnWidths, dataLength, loading, error, onRefresh, onCheckboxChange, onDelete, onToggleModal, onEdit }) => {
+const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, columnWidths, dataLength, loading, error, onRefresh, onCheckboxChange, onDelete, onToggleModal, onEdit, onSort, sortConfig }) => {
     const { t } = useTranslation('common');
 
     let labelBtnNew = '';
@@ -59,6 +61,8 @@ const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, c
             <TableHeader 
                 headers={headers} 
                 columnWidths={columnWidths} 
+                onSort={onSort}
+                sortConfig={sortConfig}
             />
             <tbody >
                 {data.map((item, index) => (

@@ -15,7 +15,7 @@ interface RelatorioItem extends Item{
     funcionario: {
       name: string;
     };
-    create_date: Date;
+    date: Date;
     is_finished: boolean;
     is_priority: boolean;
 }
@@ -119,7 +119,7 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
         },
         {
             name: 'date',
-            value: (item as RelatorioItem).create_date,
+            value: (item as RelatorioItem).date,
             renderer: (value: Date) => <span>{moment(value).format('DD/MM/YYYY')}</span>,
         },
         {
