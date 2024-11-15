@@ -37,6 +37,11 @@
     "dashboard": {
       "logout": "Sair",
       "row-update": "Erro ao pegar a linha atualizada: {{message}}",
+      "dialog": {
+        "cancel": "Cancelar",
+        "confirm": "Confirmar",
+        "ok": "Ok"
+      },
       "service-alerts": {
         "no-auth": "Usuário não autenticado ou ID da empresa não encontrado",
         "reports": {

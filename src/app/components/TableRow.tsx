@@ -6,6 +6,7 @@ import dashboardService from '../services/dashboardService';
 import { Report } from '../models/report.interface';
 import { useAlert } from '../contexts/AlertContext';
 import useTranslation from 'next-translate/useTranslation';
+import { useDialog } from '../contexts/DialogContext';
 
 interface Item {
     id:number;
@@ -44,28 +45,31 @@ interface Column<T> {
 const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, onCheckboxChange, onDelete, onEdit, onToggleModal}) => {
     const { t } = useTranslation('common');
     const { showAlert } = useAlert();
+    const { showDialog } = useDialog();
 
     const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         onCheckboxChange(item.id, field, e.target.checked); 
     };
 
-    const handleDelete= () => {
+    const handleDelete = () => {
         let confirmMessage = '';
-        if(activeTable === 'reports')
+    
+        if (activeTable === 'reports') 
             confirmMessage = `${t('pages.dashboard.tables.alerts.report.delete', {title: (item as RelatorioItem).title})}`;
-        else
-            confirmMessage = `${t('pages.dashboard.tables.alerts.employee.delete',{name: (item as EmployeeItem).name})}`;
+        else 
+            confirmMessage = `${t('pages.dashboard.tables.alerts.employee.delete', {name: (item as EmployeeItem).name})}`;
         
-        if (window.confirm(confirmMessage)) {
+        showDialog(2, confirmMessage, () => {
             onDelete(item.id, activeTable);
+    
             let successMessage = '';
-            if(activeTable === 'reports')
+            if (activeTable === 'reports') 
                 successMessage = `${t('pages.dashboard.tables.alerts.report.delete-success', {title: (item as RelatorioItem).title})}`;
-            else
-                successMessage = `${t('pages.dashboard.tables.alerts.employee.delete-success',{name: (item as EmployeeItem).name})}`;
+            else 
+                successMessage = `${t('pages.dashboard.tables.alerts.employee.delete-success', {name: (item as EmployeeItem).name})}`;
             
             showAlert("success", successMessage);
-        }
+        });
     };
 
     const handleEdit = async () => {
