@@ -139,6 +139,19 @@
             "refresh": "Refresh Table"
           }
         },
+        "filters": {
+          "title": "Filter by Title",
+          "name": "Filter by Name or Email",
+          "creator": "Filter by Creator",
+          "status": {
+            "default": "Filter by Status",
+            "label": "Select the options",
+            "finished": "Finished",
+            "not-finished": "Not Finished",
+            "priority": "Priority",
+            "not-priority": "Not Priority"
+          }
+        },
         "alerts": {
           "error-title": "Error fetching data!!",
           "error-description": "Please update the table or contact support",

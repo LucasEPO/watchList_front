@@ -139,6 +139,19 @@
             "refresh": "Atualizar Tabela"
           }
         },
+        "filters": {
+          "title": "Filtrar por Título",
+          "name": "Filtrar por Nome ou Email",
+          "creator": "Filtrar por Criador",
+          "status": {
+            "default": "Filtrar por Satus",
+            "label": "Selecione as opções",
+            "finished": "Finalizados",
+            "not-finished": "Não Finalizados",
+            "priority": "Prioritários",
+            "not-priority": "Não Prioritários"
+          }
+        },
         "alerts": {
           "error-title": "Erro ao buscar dados!!",
           "error-description": "Por favor atualize a tabela ou entre contato com suporte",

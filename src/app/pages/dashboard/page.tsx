@@ -25,6 +25,7 @@ export default function Dashboard() {
 		employeeModalOpen,
 		activeTable,
 		setActiveTable,
+		setChangedTable,
 		report,
 		employee,
 		tableReportsHeaders,
@@ -32,7 +33,6 @@ export default function Dashboard() {
 		tableEmployeesHeaders,
 		employeesColumnWidths,
 		useTableData,
-		refreshTableData,
 		updateCheckboxReport,
 		deleteRow,
 		toggleReportModal,
@@ -46,15 +46,14 @@ export default function Dashboard() {
 		loading, 
 		error, 
 		setTableData, 
-		setLoading, 
-		setError, 
-		setDataLength,
 		sortTableData,
 		sortConfig,
+		handleFilter,
+		refreshTableData,
 	} = useTableData(activeTable);
 
 	const handleRefresh = () => {
-		refreshTableData(setTableData, setLoading, setError, setDataLength, activeTable);
+		refreshTableData();
 	};
 
 	const handleUpdateReportCheckBox = async (id: number, field: string, value: boolean) => {
@@ -93,9 +92,9 @@ export default function Dashboard() {
 				case 'ERROR_DELETE':
 				default:
 					if(activeTable === 'reports')
-							errorMessage = t('pages.dashboard.service-alerts.reports.delete');
+						errorMessage = t('pages.dashboard.service-alerts.reports.delete');
 					else
-							errorMessage = t('pages.dashboard.service-alerts.employees.delete');
+						errorMessage = t('pages.dashboard.service-alerts.employees.delete');
 					break;
 			}
 
@@ -120,9 +119,9 @@ export default function Dashboard() {
 				case 'ERROR_UPDATE':
 				default:
 					if(activeTable === 'reports')
-							errorMessage = t('pages.dashboard.service-alerts.reports.delete');
+						errorMessage = t('pages.dashboard.service-alerts.reports.delete');
 					else
-							errorMessage = t('pages.dashboard.service-alerts.employees.delete');
+						errorMessage = t('pages.dashboard.service-alerts.employees.delete');
 					break;
 			}
 
@@ -151,7 +150,10 @@ export default function Dashboard() {
 			<main className="p-4 drop-shadow-md">
 				<div className="flex mb-0 justify-center">
 					<button 
-						onClick={() => setActiveTable('reports')}
+						onClick={() => {
+							setActiveTable('reports') 
+							setChangedTable(true)
+						}}
 						className={`flex-1 p-2 border-solid border-2 border-orange-400 rounded-tl-md max-w-xs transition-colors duration-300 ease-in-out ${
 							activeTable === 'reports' ? 'bg-orange-400 text-white shadow-md' : 'text-orange-400'
 						}`}
@@ -159,7 +161,10 @@ export default function Dashboard() {
 						{t('pages.dashboard.report-table.title')}
 					</button>
 					<button 
-						onClick={() => setActiveTable('employees')}
+						onClick={() => {
+							setActiveTable('employees')
+							setChangedTable(true)
+						}}
 						className={`flex-1 p-2 border-solid border-2 border-orange-400 rounded-tr-md max-w-xs transition-colors duration-300 ease-in-out ${
 							activeTable === 'employees' ? 'bg-orange-400 text-white shadow-md' : 'text-orange-400'
 						}`}
@@ -183,6 +188,7 @@ export default function Dashboard() {
 						onEdit={handleUpdateRow}
 						onToggleModal={toggleReportModal}
 						onSort={sortTableData}
+						onFilter={handleFilter}
 						sortConfig={sortConfig}
 					/>
 				}
@@ -202,6 +208,7 @@ export default function Dashboard() {
 						onEdit={handleUpdateRow}
 						onToggleModal={toggleEmployeeModal}
 						onSort={sortTableData}
+						onFilter={handleFilter}
 						sortConfig={sortConfig}
 					/>
 				}

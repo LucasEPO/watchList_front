@@ -28,6 +28,7 @@ const DashboardController = () => {
     const [report, setReport] = useState<Report | null>(null);
     const [employee, setFuncionario] = useState<Employee | null>(null);
     const [activeTable, setActiveTable] = useState<'reports' | 'employees'>('reports');
+    const [changedTable, setChangedTable] = useState<boolean>(false);
 
     const getReportsTableData = async () => {
         try {
@@ -98,16 +99,21 @@ const DashboardController = () => {
 
     const useTableData = (activeTable: string) => {
         const [tableData, setTableData] = useState<any[]>([]);
+        const [allTableData, setAllTableData] = useState<any[]>([]);
         const [loading, setLoading] = useState<boolean>(true);
         const [error, setError] = useState<string | null>(null);
         const [dataLength, setDataLength] = useState<number>(0);
-        const [sortConfig, setSortConfig] = useState<{ column: string; direction: 'asc' | 'desc' } | null>(null);
+        const [sortConfig, setSortConfig] = useState<{ column: string; direction: 'asc' | 'desc'; index: number } | null>(null);
+        const [textFilterValue, setTextFilterValue] = useState<string | undefined >(undefined);
+        const [employeeFilterValue, setEmployeeFilterValue] = useState<string | undefined >(undefined);
+        const [statusFilterValue, setStatusFilterValue] = useState<any | undefined >(undefined);
       
         useEffect(() => {
             const loadReportsData = async () => {
                 try {
-                const formattedData = await getReportsTableData(); 
+                    const formattedData = await getReportsTableData(); 
                     setTableData(formattedData);
+                    setAllTableData(formattedData);
                     setDataLength(formattedData.length);
                 } catch (error) {
                     setError(t('pages.dashboard.alerts.error-loading'));
@@ -118,8 +124,8 @@ const DashboardController = () => {
             const loadEmployeesData = async () => {
                 try {
                     const formattedData = await getEmployeesTableData(); 
-
                     setTableData(formattedData);
+                    setAllTableData(formattedData);
                     setDataLength(formattedData.length);
                 } catch (error) {
                     setError(t('pages.dashboard.alerts.error-loading'));
@@ -128,13 +134,16 @@ const DashboardController = () => {
                 }
             };
       
-            if(activeTable === 'reports')
+            if (activeTable === 'reports') {
                 loadReportsData(); 
-            else
+                setChangedTable(false);
+            } else {
                 loadEmployeesData();
+                setChangedTable(false);
+            }
         }, [activeTable]);
 
-        const sortTableData = (keyIndex: number) => {
+        const sortTableData = (keyIndex: number, fromRefresh: boolean = false) => {
             let sortableColumns;
             if (activeTable === 'reports') {
                 if(keyIndex > 3) return;
@@ -145,14 +154,17 @@ const DashboardController = () => {
             }
 
             let column = sortableColumns[keyIndex];
-
             let direction: 'asc' | 'desc' | null = 'asc';
-            if (sortConfig && sortConfig.column === column) {
+
+            if (!fromRefresh && sortConfig && sortConfig.column === column) {
+                
                 if (sortConfig.direction === 'asc') 
                     direction = 'desc';
                 else if (sortConfig.direction === 'desc') 
                     direction = null;
                 
+            } else if (sortConfig && sortConfig.column === column) {
+                direction = sortConfig.direction;
             }
             
             let sortedData;
@@ -170,23 +182,21 @@ const DashboardController = () => {
                         const nameA = a.funcionario ? a.funcionario.name : '';
                         const nameB = b.funcionario ? b.funcionario.name : '';
             
-                        if (nameA < nameB) {
+                        if (nameA < nameB) 
                             return direction === 'asc' ? -1 : 1;
-                        }
-                        if (nameA > nameB) {
+                        
+                        if (nameA > nameB) 
                             return direction === 'asc' ? 1 : -1;
-                        }
+                        
                         return 0;
                     }
             
-                    if (a[column] < b[column]) {
+                    if (a[column] < b[column]) 
                         return direction === 'asc' ? -1 : 1;
-                    }
-            
-                    if (a[column] > b[column]) {
+                    
+                    if (a[column] > b[column]) 
                         return direction === 'asc' ? 1 : -1;
-                    }
-            
+                
                     return 0;
                 });
             } else {
@@ -195,8 +205,101 @@ const DashboardController = () => {
                 });
             }
         
-            setSortConfig(direction ? { column, direction } : null);
+            setSortConfig(direction ? { column, direction, index: keyIndex } : null);
             setTableData(sortedData); 
+        };
+
+        const handleFilter = (textFilter?: string, selectedEmployeeName?: string, selectedStatus?: any) => {
+            if(changedTable) return;
+            if(allTableData.length === 0) return;
+
+            if(activeTable === 'reports'){
+                let filtered = allTableData;
+
+                if (textFilter && textFilter.length > 0) {
+                    filtered = allTableData.filter((item) =>
+                        item.title.toLowerCase().includes(textFilter.toLowerCase())
+                    );
+                    
+                    setTextFilterValue(textFilter);
+                } else {
+                    setTextFilterValue(undefined);
+                }
+
+                if (selectedEmployeeName) {
+                    setEmployeeFilterValue(selectedEmployeeName);
+
+                    filtered = filtered.filter((item) =>
+                        item.funcionario.name.toLowerCase().includes(selectedEmployeeName.toLowerCase())
+                    );
+                }
+
+                if(selectedStatus) {
+                    setStatusFilterValue(selectedStatus);
+                    if(selectedStatus.finished !== null) {
+                        filtered = filtered.filter((item) =>
+                            item.is_finished === selectedStatus.finished
+                        );
+                    }
+
+                    if(selectedStatus.priority !== null) {
+                        filtered = filtered.filter((item) =>
+                            item.is_priority === selectedStatus.priority
+                        );
+                    }
+                }
+
+                if( textFilter || selectedEmployeeName || selectedStatus )
+                    setTableData(filtered);
+                else
+                    setTableData(allTableData);
+
+            } else {
+                if(!textFilter) return;
+
+                if (textFilter.length > 0) {
+                    const filtered = allTableData.filter((item) =>
+                        item.name.toLowerCase().includes(textFilter.toLowerCase()) ||
+                        item.email.toLowerCase().includes(textFilter.toLowerCase())
+                    );
+                    setTableData(filtered);
+                    setTextFilterValue(textFilter);
+                } else {
+                    setTableData(allTableData);
+                    setTextFilterValue(undefined);
+                }
+            }
+        };
+
+        const refreshTableData = async () => {
+            setTableData([]); 
+            setLoading(true);
+            try {
+                let formattedData;
+                if (activeTable === 'reports') {
+                    formattedData = await getReportsTableData();
+                } else {
+                    formattedData = await getEmployeesTableData();
+                }
+                
+                setTimeout(() => {
+                    if (textFilterValue || employeeFilterValue || statusFilterValue) {
+                        handleFilter(textFilterValue, employeeFilterValue, statusFilterValue);
+                    } else {
+                        setTableData(formattedData);
+                        setAllTableData(formattedData);  
+                        setDataLength(formattedData ? formattedData.length : 0);
+                    }
+
+                    if(sortConfig) sortTableData(sortConfig.index, true);
+                }, 1000);
+            } catch (error) {
+                setError(t('pages.dashboard.alerts.error-refresh')); 
+            } finally {
+                setTimeout(() => {
+                    setLoading(false);
+                }, 1000);
+            }
         };
       
         return { 
@@ -210,36 +313,9 @@ const DashboardController = () => {
             setDataLength, 
             sortTableData,
             sortConfig,
+            handleFilter,
+            refreshTableData,
         };
-    };
-
-    const refreshTableData = async (
-        setTableData: React.Dispatch<React.SetStateAction<any[]>>,
-        setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-        setError: React.Dispatch<React.SetStateAction<string | null>>,
-        setDataLength: React.Dispatch<React.SetStateAction<number>>,
-        activeTable: string,
-    ) => {
-        setTableData([]);
-        setLoading(true);
-        try {
-            let formattedData;
-            if(activeTable === 'reports'){
-                formattedData = await getReportsTableData();
-            } else {
-                formattedData = await getEmployeesTableData();
-            }
-            setTimeout(() => {
-                setTableData(formattedData);
-                setDataLength(formattedData ? formattedData.length : 0);
-            }, 1000);
-        } catch (error) {
-            setError(t('pages.dashboard.alerts.error-refresh'));
-        } finally {
-            setTimeout(() => {
-                setLoading(false);
-            }, 1000);
-        }
     };
 
     const updateCheckboxReport = async (id: number, field: string, value: boolean) => {
@@ -291,6 +367,7 @@ const DashboardController = () => {
         setReportModalOpen,
         activeTable,
         setActiveTable,
+        setChangedTable,
         report,
         employee,
         tableReportsHeaders,
@@ -298,7 +375,6 @@ const DashboardController = () => {
         tableEmployeesHeaders,
         employeesColumnWidths,
         useTableData,
-        refreshTableData,
         updateCheckboxReport,
         deleteRow,
         toggleReportModal,

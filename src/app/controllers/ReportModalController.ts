@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { Employee } from '../models/employee.interface.js';
 import moment from 'moment';
 import { Report } from '../models/report.interface.js';
@@ -14,7 +13,7 @@ interface AutocompleteOption {
 const ReportModalController = (onClose: () => void, handleRefresh: () => void, report: Report | null) => {   
     const { t } = useTranslation('common');
 
-    const [enterpriseId, setEnterpriseId] = React.useState<number | null>(null);
+    const [companyId, setCompanyId] = useState<number | null>(null);
 
     const initialFormData = {
         title: '',
@@ -23,19 +22,19 @@ const ReportModalController = (onClose: () => void, handleRefresh: () => void, r
         description: '',
         preventionAction: '',
         riskAction: '',
-        enterpriseId: enterpriseId,
+        companyId: companyId,
         employeeId: null as number | null,
         date: moment(),
         finishDate: moment() as moment.Moment | null,
     };
 
-    const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-    const [options, setOptions] = React.useState<AutocompleteOption[]>([]);
-    const [loading, setLoading] = React.useState(false);
-    const [isPriority, setIsPriority] = React.useState(false);
-    const [isFinished, setIsFinished] = React.useState<boolean>(false);
-    const [workshift, setWorkshift] = React.useState('1');
-    const [formData, setFormData] = React.useState(initialFormData);
+    const [autocompleteOpen, setAutocompleteOpen] = useState(false);
+    const [options, setOptions] = useState<AutocompleteOption[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [isPriority, setIsPriority] = useState(false);
+    const [isFinished, setIsFinished] = useState<boolean>(false);
+    const [workshift, setWorkshift] = useState('1');
+    const [formData, setFormData] = useState(initialFormData);
 
     useEffect(() => {
         fetchOptions();
@@ -50,7 +49,7 @@ const ReportModalController = (onClose: () => void, handleRefresh: () => void, r
                 description: (report.description).toString() || '',
                 preventionAction: report.prevention_action? (report.prevention_action).toString() || '' : '',
                 riskAction: report.risk_action? (report.risk_action).toString() || '' : '',
-                enterpriseId: enterpriseId,
+                companyId: companyId,
                 employeeId: report.funcionario?.id || null,
                 date: report.date ? moment(report.date) : moment(),
                 finishDate: report.finished_date ? moment(report.finished_date) : null,
@@ -67,7 +66,7 @@ const ReportModalController = (onClose: () => void, handleRefresh: () => void, r
     const fetchCompanyId = () => {
         if (typeof window !== 'undefined') {
             const id = sessionStorage.getItem("empresa_id");
-            setEnterpriseId(id ? +id : null);
+            setCompanyId(id ? +id : null);
         }
     };
 
@@ -101,7 +100,7 @@ const ReportModalController = (onClose: () => void, handleRefresh: () => void, r
 
             } else {
 
-                if(!enterpriseId)
+                if(!companyId)
                     throw {code: 'ERROR_COMPANY_NOT_FOUND', status: 404};
                 
                 response = await dashboardService.createReport({...formData, isPriority, isFinished, workshift})
@@ -155,8 +154,8 @@ const ReportModalController = (onClose: () => void, handleRefresh: () => void, r
     const fetchOptions = async (showAlert?: (type: 'success' | 'warning' | 'error' | 'info', message: string) => void) => {
         setLoading(true);
         try {
-            const empresaId = sessionStorage.getItem("empresa_id");
-            if (!empresaId) throw {code: 'ERROR_COMPANY_NOT_FOUND'};
+            const companyId = sessionStorage.getItem("empresa_id");
+            if (!companyId) throw {code: 'ERROR_COMPANY_NOT_FOUND'};
         
             const response = await dashboardService.getAllEmployees(); 
 

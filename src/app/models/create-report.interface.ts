@@ -7,7 +7,7 @@ export interface CreateReport {
     preventionAction: string | null;
     riskAction: string | null;
     workshift: string;
-    enterpriseId: number | null; 
+    companyId: number | null; 
     employeeId: number | null;    
     date: moment.Moment;
     finishDate:  moment.Moment | null;

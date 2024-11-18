@@ -94,21 +94,21 @@ const ReportModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handleRef
                             }}
                             renderInput={(params) => (
                                 <TextField
-                                sx={textFieldStyles}
-                                {...params}
-                                label={t('pages.dashboard.report-modal.fields.employee')}
-                                required
-                                slotProps={{
-                                    input: {
-                                    ...params.InputProps,
-                                    endAdornment: (
-                                        <React.Fragment>
-                                            {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                                            {params.InputProps.endAdornment}
-                                        </React.Fragment>
-                                    ),
-                                    },
-                                }}
+                                    sx={textFieldStyles}
+                                    {...params}
+                                    label={t('pages.dashboard.report-modal.fields.employee')}
+                                    required
+                                    slotProps={{
+                                        input: {
+                                        ...params.InputProps,
+                                        endAdornment: (
+                                            <React.Fragment>
+                                                {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                                                {params.InputProps.endAdornment}
+                                            </React.Fragment>
+                                        ),
+                                        },
+                                    }}
                                 />
                             )}
                         />

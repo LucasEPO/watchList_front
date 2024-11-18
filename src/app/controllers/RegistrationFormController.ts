@@ -49,7 +49,6 @@ const RegistrationFormController = () => {
             
             switch (error.code) {
                 case 'ERROR_REPEATED_LOGIN':
-                    console.log('a');
                     errorMessage = t('pages.login.registration-form.alerts.duplicated-login');
                     break;
                 case 'ERROR_REGISTRATION_FAILED':

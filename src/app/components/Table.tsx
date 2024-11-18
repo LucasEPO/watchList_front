@@ -6,11 +6,13 @@ import { FiPlus, FiRefreshCw } from "react-icons/fi";
 import ExpansiveButton from '@/app/components/ExpansiveButton';
 import useTranslation from 'next-translate/useTranslation';
 
+import Filters from './Filters';
+
 interface TableProps {
     headers: string[];  
     data: any[];
     tableTitle: string;
-    activeTable: string;
+    activeTable: 'reports'|'employees';
     columnWidths: string[];
     dataLength: number;
     loading: boolean;   
@@ -21,10 +23,11 @@ interface TableProps {
     onDelete: (id:number, activeTable: string) => Promise<void>;
     onEdit: (id: number, updates: object, activeTable: string) => Promise<void>;
     onSort: (key: number) => void;
+    onFilter: (textFilter?: string, selectedEmployeeName?: string, selectedStatus?: any) => void;
     sortConfig: { column: string; direction: 'asc' | 'desc' | null } | null;
 }
 
-const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, columnWidths, dataLength, loading, error, onRefresh, onCheckboxChange, onDelete, onToggleModal, onEdit, onSort, sortConfig }) => {
+const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, columnWidths, dataLength, loading, error, onRefresh, onCheckboxChange, onDelete, onToggleModal, onEdit, onSort, onFilter, sortConfig }) => {
     const { t } = useTranslation('common');
 
     let labelBtnNew = '';
@@ -35,27 +38,31 @@ const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, c
         
   return (
     <div className="">
-        <div className="p-4 bg-orange-400 rounded-t-3xl w-full flex justify-between">
-            <div className="inline-block float-left text-left">
-                <p className="font-bold text-lg">{tableTitle}</p>
-                <p className="opacity-75">{dataLength} {t('pages.dashboard.tables.header.results')}</p>
-            </div>
-            <div className="float-right text-right">
-                <div className="inline-block mr-2 drop-shadow-2xl">
-                    <ExpansiveButton 
-                        icon={<FiPlus />} 
-                        label={labelBtnNew} 
-                        onClick={onToggleModal}
-                    />
+        <div className="flex flex-col p-4 bg-orange-400 rounded-t-3xl">
+            <div className=" w-full flex justify-between">
+                <div className="inline-block float-left text-left">
+                    <p className="font-bold text-lg">{tableTitle}</p>
+                    <p className="opacity-75">{dataLength} {t('pages.dashboard.tables.header.results')}</p>
                 </div>
-                <div className="inline-block drop-shadow-2xl">
-                    <ExpansiveButton 
-                        icon={<FiRefreshCw />} 
-                        label={t('pages.dashboard.tables.header.buttons.refresh')} 
-                        onClick={onRefresh}
-                    />
+                <div className="float-right text-right">
+                    <div className="inline-block mr-2 drop-shadow-2xl">
+                        <ExpansiveButton 
+                            icon={<FiPlus />} 
+                            label={labelBtnNew} 
+                            onClick={onToggleModal}
+                        />
+                    </div>
+                    <div className="inline-block drop-shadow-2xl">
+                        <ExpansiveButton 
+                            icon={<FiRefreshCw />} 
+                            label={t('pages.dashboard.tables.header.buttons.refresh')} 
+                            onClick={onRefresh}
+                        />
+                    </div>
                 </div>
             </div>
+            <Filters onFilter={onFilter} activeTable={activeTable}/>
+            
         </div>
         <table className="table-fixed w-full">
             <TableHeader 
