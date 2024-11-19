@@ -33,6 +33,7 @@ const DashboardController = () => {
     const getReportsTableData = async () => {
         try {
             const data = await dashboardService.getReportData();
+            console.log('d>', data);
     
             const formattedData = data.map((report: Report ) => {
                 return {
@@ -255,9 +256,8 @@ const DashboardController = () => {
                     setTableData(allTableData);
 
             } else {
-                if(!textFilter) return;
 
-                if (textFilter.length > 0) {
+                if (textFilter && textFilter.length > 0) {
                     const filtered = allTableData.filter((item) =>
                         item.name.toLowerCase().includes(textFilter.toLowerCase()) ||
                         item.email.toLowerCase().includes(textFilter.toLowerCase())
@@ -301,6 +301,12 @@ const DashboardController = () => {
                 }, 1000);
             }
         };
+
+        const clearFilters = () => {
+            setTextFilterValue(undefined);
+            setEmployeeFilterValue(undefined);
+            setStatusFilterValue(undefined);
+        }
       
         return { 
             tableData,
@@ -315,6 +321,7 @@ const DashboardController = () => {
             sortConfig,
             handleFilter,
             refreshTableData,
+            clearFilters,
         };
     };
 

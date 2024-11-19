@@ -1,21 +1,17 @@
 import { FaFilter } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
-import { Autocomplete, Box, Checkbox, CircularProgress, Divider, FormControl, ListItemText, MenuItem, OutlinedInput, Select, TextField } from '@mui/material';
+import { Autocomplete, Checkbox, CircularProgress, Divider, FormControl, ListItemText, MenuItem, Select, TextField } from '@mui/material';
 import { useAlert } from '../contexts/AlertContext';
 import FiltersController from '../controllers/FiltersController';
 import { filtersStyles } from '../styles/filtersStyles';
 import useTranslation from 'next-translate/useTranslation';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
-import { SingleInputDateRangeField } from '@mui/x-date-pickers-pro/SingleInputDateRangeField';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { DateField } from '@mui/x-date-pickers';
+import ExpansiveButton from '@/app/components/ExpansiveButton';
+import { RiFilterOffLine } from "react-icons/ri";
 
 interface FiltersProps {
     activeTable: 'reports'|'employees';
     onFilter: (textFilter?: string, selectedEmployeeName?: string, selectedStatus?: any) => void;
+    onClearFilters: () => void;
 };
 
 interface AutocompleteOption {
@@ -33,7 +29,7 @@ const MenuProps = {
   },
 };
 
-const Filters: React.FC<FiltersProps> = ({ onFilter, activeTable }) => {
+const Filters: React.FC<FiltersProps> = ({ activeTable, onFilter, onClearFilters }) => {
     const { t } = useTranslation("common");
     const { showAlert } = useAlert();
     
@@ -53,7 +49,8 @@ const Filters: React.FC<FiltersProps> = ({ onFilter, activeTable }) => {
         selectedStatusOptions,
         handleStatusChange,
         selectedStatusLabels,
-    } = FiltersController();
+        handleClearFilters,
+    } = FiltersController(onClearFilters);
 
     useEffect(() => {
         if(enterPressed) return;
@@ -128,7 +125,7 @@ const Filters: React.FC<FiltersProps> = ({ onFilter, activeTable }) => {
                 }
                 {activeTable === 'reports' &&
                     <FormControl
-                        sx={{ ...filtersStyles, width: '20%' }}
+                        sx={{ ...filtersStyles, minWidth: '20%' }}
                     >
                         <Select
                             id="statusFilter"
@@ -172,6 +169,16 @@ const Filters: React.FC<FiltersProps> = ({ onFilter, activeTable }) => {
                     </FormControl>
                 }
                 
+            </div>
+            <div className="flex align-middle w-fit">
+                <Divider variant='middle' orientation='vertical' flexItem className="mr-5 bg-orange-500"/>
+
+                <ExpansiveButton 
+                    icon={<RiFilterOffLine />} 
+                    label={t('pages.dashboard.tables.filters.clear')} 
+                    onClick={handleClearFilters}
+                    notRotate={true}
+                />
             </div>
         </div>
     );

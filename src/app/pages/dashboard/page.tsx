@@ -50,6 +50,7 @@ export default function Dashboard() {
 		sortConfig,
 		handleFilter,
 		refreshTableData,
+		clearFilters,
 	} = useTableData(activeTable);
 
 	const handleRefresh = () => {
@@ -189,6 +190,7 @@ export default function Dashboard() {
 						onToggleModal={toggleReportModal}
 						onSort={sortTableData}
 						onFilter={handleFilter}
+						onClearFilters={clearFilters}
 						sortConfig={sortConfig}
 					/>
 				}
@@ -209,6 +211,7 @@ export default function Dashboard() {
 						onToggleModal={toggleEmployeeModal}
 						onSort={sortTableData}
 						onFilter={handleFilter}
+						onClearFilters={clearFilters}
 						sortConfig={sortConfig}
 					/>
 				}

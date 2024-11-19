@@ -15,7 +15,7 @@ interface StatusOptions {
     field: string
 };
 
-const FiltersController = () => {
+const FiltersController = (onClearFilters: () => void) => {
     const { t } = useTranslation('common');
 
     const [textFilter, setTextFilter] = useState('');
@@ -109,6 +109,13 @@ const FiltersController = () => {
         setSelectedStatusOptions(newSelectedOptions);
     };
 
+    const handleClearFilters = () => {
+        setTextFilter('');
+        setSelectedEmployee(null);
+        setSelectedStatusOptions({finished: null, priority: null});
+        onClearFilters();
+    }
+
     return {
         textFilter,
         setTextFilter,
@@ -123,6 +130,7 @@ const FiltersController = () => {
         selectedStatusOptions,
         handleStatusChange,
         selectedStatusLabels,
+        handleClearFilters,
     };
 
 };

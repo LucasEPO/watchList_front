@@ -143,6 +143,7 @@
           "title": "Filter by Title",
           "name": "Filter by Name or Email",
           "creator": "Filter by Creator",
+          "clear": "Clear filters",
           "status": {
             "default": "Filter by Status",
             "label": "Select the options",

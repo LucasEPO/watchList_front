@@ -24,10 +24,11 @@ interface TableProps {
     onEdit: (id: number, updates: object, activeTable: string) => Promise<void>;
     onSort: (key: number) => void;
     onFilter: (textFilter?: string, selectedEmployeeName?: string, selectedStatus?: any) => void;
+    onClearFilters: () => void;
     sortConfig: { column: string; direction: 'asc' | 'desc' | null } | null;
 }
 
-const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, columnWidths, dataLength, loading, error, onRefresh, onCheckboxChange, onDelete, onToggleModal, onEdit, onSort, onFilter, sortConfig }) => {
+const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, columnWidths, dataLength, loading, error, onRefresh, onCheckboxChange, onDelete, onToggleModal, onEdit, onSort, onFilter, onClearFilters, sortConfig }) => {
     const { t } = useTranslation('common');
 
     let labelBtnNew = '';
@@ -61,7 +62,7 @@ const Table: React.FC<TableProps> = ({ headers, data, tableTitle, activeTable, c
                     </div>
                 </div>
             </div>
-            <Filters onFilter={onFilter} activeTable={activeTable}/>
+            <Filters onFilter={onFilter} activeTable={activeTable} onClearFilters={onClearFilters}/>
             
         </div>
         <table className="table-fixed w-full">

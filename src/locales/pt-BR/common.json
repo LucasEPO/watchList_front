@@ -143,6 +143,7 @@
           "title": "Filtrar por Título",
           "name": "Filtrar por Nome ou Email",
           "creator": "Filtrar por Criador",
+          "clear": "Limpar filtros",
           "status": {
             "default": "Filtrar por Satus",
             "label": "Selecione as opções",
