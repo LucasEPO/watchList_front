@@ -10,6 +10,8 @@ import EmployeeModal from '@/app/components/EmployeeModal';
 import useTranslation from 'next-translate/useTranslation';
 import { useAlert } from '@/app/contexts/AlertContext';
 import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
+import { FaChevronUp } from 'react-icons/fa';
 
 const LanguageSelector = dynamic(() => import("@/app/components/languageSelector"), {
 	ssr: false
@@ -19,6 +21,8 @@ export default function Dashboard() {
 	const { t } = useTranslation('common');
 	const { showAlert } = useAlert();
 	const router = useRouter(); 
+
+	const [scrollUpVisible, setScrollUpVisible] = useState(false);
 
 	const {
 		reportModalOpen,
@@ -60,13 +64,7 @@ export default function Dashboard() {
 	const handleUpdateReportCheckBox = async (id: number, field: string, value: boolean) => {
 		try{
 			const response = await updateCheckboxReport(id, field, value);
-			/* if (response.data) {
-				setTableData((prevData) =>
-					prevData.map((item) => 
-						item.id === id ? { ...item, [field]: value } : item
-					)
-				);
-			} */
+			
 		} catch (error: any) {
 			let errorMessage = '';
 
@@ -135,8 +133,29 @@ export default function Dashboard() {
 		router.push('/');
 	};
 
+	const scrollToTop = () => {
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	};
+
+	const handleScroll = () => {
+		if (window.scrollY > 100) 
+			setScrollUpVisible(true);
+		else 
+			setScrollUpVisible(false);
+	};
+
+	useEffect(() => {
+		window.addEventListener('scroll', handleScroll);
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, []);
+
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-black to-[#3f3f3f]">
+		<div className="relative min-h-screen bg-gradient-to-b from-black to-[#3f3f3f]">
 
 			<header className="flex justify-between p-4 items-center">
 				<div className="text-xl font-bold">{t('app.watchlist')}</div>
@@ -148,7 +167,7 @@ export default function Dashboard() {
 				</div>
 			</header>
 
-			<main className="p-4 drop-shadow-md">
+			<main className="p-4 relative">
 				<div className="flex mb-0 justify-center">
 					<button 
 						onClick={() => {
@@ -227,6 +246,17 @@ export default function Dashboard() {
 					handleRefresh={handleRefresh} 
 					employee={employee} 
 				/>
+				{scrollUpVisible && (
+					<div className="fixed bottom-4 right-4">
+						<button 
+							onClick={scrollToTop}
+							className="text-3xl bg-orange-500 rounded-full p-3 shadow"
+						>
+							<FaChevronUp className="text-white" />
+						</button>
+					</div>
+				)}
+
 			</main>
 		</div>
 	);

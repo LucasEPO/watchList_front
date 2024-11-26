@@ -125,7 +125,7 @@ const dashboardService = {
             
     },
 
-    async findEmpresa(id: number) {
+    async findCompany(id: number) {
         try {
             const response = await axios.get(`${API_URL}/empresas/${id}`, {
                 headers: {

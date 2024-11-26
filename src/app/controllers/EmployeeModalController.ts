@@ -79,10 +79,10 @@ const EmployeeModalController = (onClose: () => void, handleRefresh: () => void,
                 case 'ERROR_NOT_FOUND':
                     errorMessage = t('pages.dashboard.service-alerts.employees.find-one');
                 case 'ERROR_UPDATE':
-                    errorMessage = t('pages.dashboard.service-alerts.employee.update');
+                    errorMessage = t('pages.dashboard.service-alerts.employees.update');
                 case 'ERROR_CREATE':
                 default:
-                    errorMessage = t('pages.dashboard.service-alerts.employee.create');
+                    errorMessage = t('pages.dashboard.service-alerts.employees.create');
                     break;
             }
 
