@@ -33,7 +33,6 @@ const DashboardController = () => {
     const getReportsTableData = async () => {
         try {
             const data = await dashboardService.getReportData();
-            console.log('d>', data);
     
             const formattedData = data.map((report: Report ) => {
                 return {
@@ -210,15 +209,15 @@ const DashboardController = () => {
             setTableData(sortedData); 
         };
 
-        const handleFilter = (textFilter?: string, selectedEmployeeName?: string, selectedStatus?: any) => {
+        const handleFilter = async (textFilter?: string, selectedEmployeeName?: string, selectedStatus?: any) => {
             if(changedTable) return;
             if(allTableData.length === 0) return;
 
             if(activeTable === 'reports'){
-                let filtered = allTableData;
+                let filtered = await getReportsTableData();
 
                 if (textFilter && textFilter.length > 0) {
-                    filtered = allTableData.filter((item) =>
+                    filtered = filtered.filter((item: Report) =>
                         item.title.toLowerCase().includes(textFilter.toLowerCase())
                     );
                     
@@ -230,7 +229,7 @@ const DashboardController = () => {
                 if (selectedEmployeeName) {
                     setEmployeeFilterValue(selectedEmployeeName);
 
-                    filtered = filtered.filter((item) =>
+                    filtered = filtered.filter((item: Report) =>
                         item.funcionario.name.toLowerCase().includes(selectedEmployeeName.toLowerCase())
                     );
                 }
@@ -238,22 +237,25 @@ const DashboardController = () => {
                 if(selectedStatus) {
                     setStatusFilterValue(selectedStatus);
                     if(selectedStatus.finished !== null) {
-                        filtered = filtered.filter((item) =>
+                        filtered = filtered.filter((item: Report) =>
                             item.is_finished === selectedStatus.finished
                         );
                     }
 
                     if(selectedStatus.priority !== null) {
-                        filtered = filtered.filter((item) =>
+                        filtered = filtered.filter((item: Report) =>
                             item.is_priority === selectedStatus.priority
                         );
                     }
                 }
 
-                if( textFilter || selectedEmployeeName || selectedStatus )
+                if ( textFilter || selectedEmployeeName || selectedStatus ) {
                     setTableData(filtered);
-                else
+                    setDataLength(filtered.length);
+                } else {
                     setTableData(allTableData);
+                    setDataLength(allTableData.length); 
+                }
 
             } else {
 
@@ -274,8 +276,8 @@ const DashboardController = () => {
         const refreshTableData = async () => {
             setTableData([]); 
             setLoading(true);
+            let formattedData: any;
             try {
-                let formattedData;
                 if (activeTable === 'reports') {
                     formattedData = await getReportsTableData();
                 } else {
@@ -296,7 +298,7 @@ const DashboardController = () => {
             } catch (error) {
                 setError(t('pages.dashboard.alerts.error-refresh')); 
             } finally {
-                setTimeout(() => {
+                setTimeout(() => {  
                     setLoading(false);
                 }, 1000);
             }
@@ -307,6 +309,22 @@ const DashboardController = () => {
             setEmployeeFilterValue(undefined);
             setStatusFilterValue(undefined);
         }
+
+        const updateCheckboxReport = async (id: number, field: string, value: boolean) => {
+            const update = {[field]: value};
+            const response = await dashboardService.updateReport(id, update);
+            const data = await getReportsTableData();
+
+            setAllTableData(data);
+
+            if (textFilterValue || employeeFilterValue || statusFilterValue) {
+                handleFilter(textFilterValue, employeeFilterValue, statusFilterValue);
+            } 
+
+            if(sortConfig) sortTableData(sortConfig.index, true);
+
+            return response;
+        };
       
         return { 
             tableData,
@@ -322,14 +340,11 @@ const DashboardController = () => {
             handleFilter,
             refreshTableData,
             clearFilters,
+            updateCheckboxReport,
         };
     };
 
-    const updateCheckboxReport = async (id: number, field: string, value: boolean) => {
-        const update = {[field]: value};
-        const response = await dashboardService.updateReport(id, update);
-        return response;
-    };
+    
 
     const deleteRow = async (id: number, activeTable: string) => {
         let response;
@@ -382,7 +397,6 @@ const DashboardController = () => {
         tableEmployeesHeaders,
         employeesColumnWidths,
         useTableData,
-        updateCheckboxReport,
         deleteRow,
         toggleReportModal,
         toggleEmployeeModal,

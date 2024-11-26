@@ -85,7 +85,7 @@ const Filters: React.FC<FiltersProps> = ({ activeTable, onFilter, onClearFilters
                     value={textFilter}
                     onChange={(e) => setTextFilter(e.target.value)}
                     onKeyDown={handleKeyPress}
-                    sx={{...filtersStyles, width: '25%'}}
+                    sx={{...filtersStyles, minidth: '25%'}}
                 />
                 {activeTable === 'reports' &&
                     <Autocomplete

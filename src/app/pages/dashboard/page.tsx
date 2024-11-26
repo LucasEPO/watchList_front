@@ -33,7 +33,6 @@ export default function Dashboard() {
 		tableEmployeesHeaders,
 		employeesColumnWidths,
 		useTableData,
-		updateCheckboxReport,
 		deleteRow,
 		toggleReportModal,
 		toggleEmployeeModal,
@@ -51,6 +50,7 @@ export default function Dashboard() {
 		handleFilter,
 		refreshTableData,
 		clearFilters,
+		updateCheckboxReport,
 	} = useTableData(activeTable);
 
 	const handleRefresh = () => {
@@ -60,13 +60,13 @@ export default function Dashboard() {
 	const handleUpdateReportCheckBox = async (id: number, field: string, value: boolean) => {
 		try{
 			const response = await updateCheckboxReport(id, field, value);
-			if (response.data) {
+			/* if (response.data) {
 				setTableData((prevData) =>
 					prevData.map((item) => 
 						item.id === id ? { ...item, [field]: value } : item
 					)
 				);
-			}
+			} */
 		} catch (error: any) {
 			let errorMessage = '';
 

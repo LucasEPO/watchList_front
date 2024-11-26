@@ -73,7 +73,7 @@
       },
       "report-modal": {
         "title-new": "New Risk Report",
-        "title-edit": "Edit: {{name}}",
+        "title-edit": "Edit: {{title}}",
         "fields": {
           "title": "Title",
           "employee": "Employee",

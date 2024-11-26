@@ -7,6 +7,7 @@ import { Report } from '../models/report.interface';
 import { useAlert } from '../contexts/AlertContext';
 import useTranslation from 'next-translate/useTranslation';
 import { useDialog } from '../contexts/DialogContext';
+import { useEffect } from 'react';
 
 interface Item {
     id:number;
@@ -50,6 +51,10 @@ const TableRow: React.FC<TableRowProps> = ({ item, columnWidths, activeTable, on
     const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         onCheckboxChange(item.id, field, e.target.checked); 
     };
+
+    useEffect(() => {
+        console.log(item);
+    }, [])
 
     const handleDelete = () => {
         let confirmMessage = '';
