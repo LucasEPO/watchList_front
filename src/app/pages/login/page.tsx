@@ -21,14 +21,21 @@ export default function LoginPage() {
 	const [showRegistration, setShowRegistration] = useState(false);
 	const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 	const [hasError, setHasError] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const handleSubmitForm = async ({login, password }: { login: string; password: string }) => {
 		try {
 			const token = await LoginController.login(login, password);
 			setHasError(false);
+			setTimeout(() => {
+				setLoading(false); 
+			}, 2000);
 			router.push('/pages/dashboard');
 		} catch (error: any) {
 			setHasError(true);
+			setTimeout(() => {
+				setLoading(false); 
+			}, 2000);
 			let errorMessage = '';
 
 			switch (error.code) {
@@ -69,6 +76,8 @@ export default function LoginPage() {
 						onSubmit={handleSubmitForm} 
 						hasError={hasError} 
 						onShowRegistration={() => setShowRegistration(true)}
+						setLoading={setLoading}
+						loading={loading}
 					/>
 				) : (
 					<div className="">

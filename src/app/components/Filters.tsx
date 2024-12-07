@@ -77,7 +77,7 @@ const Filters: React.FC<FiltersProps> = ({ activeTable, onFilter, onClearFilters
     return (
         <div className="flex mt-3 rounded-md text-left items-center bg-orange-300 px-5 py-2 w-full drop-shadow-lg">
             <FaFilter className="text-2xl mr-4"/>
-            <Divider variant='middle' orientation='vertical' flexItem className="mr-5 bg-orange-500"/>
+            <Divider variant='middle' orientation='vertical' flexItem className="bg-orange-500" sx={{ marginRight: '1.25rem'}}/>
             <div className="flex gap-4 items-center w-full">
                 <TextField
                     variant="outlined"
@@ -137,7 +137,7 @@ const Filters: React.FC<FiltersProps> = ({ activeTable, onFilter, onClearFilters
                             }
                             displayEmpty
                             MenuProps={MenuProps}
-                            sx={filtersStyles}
+                            sx={{filtersStyles}}
                         >
                             <MenuItem disabled value="">
                                 <em>{t ('pages.dashboard.tables.filters.status.label')}</em>
@@ -161,6 +161,11 @@ const Filters: React.FC<FiltersProps> = ({ activeTable, onFilter, onClearFilters
                                         (option.field === 'is_finished' && selectedStatusOptions.finished === option.value) ||
                                         (option.field === 'is_priority' && selectedStatusOptions.priority === option.value)
                                         }
+                                        sx={{
+                                            '&.Mui-checked': {
+                                                color: "#f97316",
+                                            },
+                                        }}
                                     />
                                     <ListItemText primary={option.label} />
                                 </MenuItem>
@@ -171,7 +176,7 @@ const Filters: React.FC<FiltersProps> = ({ activeTable, onFilter, onClearFilters
                 
             </div>
             <div className="flex align-middle w-fit">
-                <Divider variant='middle' orientation='vertical' flexItem className="mr-5 bg-orange-500"/>
+                <Divider variant='middle' orientation='vertical' flexItem className="bg-orange-500" sx={{ marginRight: '1.25rem'}}/>
 
                 <ExpansiveButton 
                     icon={<RiFilterOffLine />} 

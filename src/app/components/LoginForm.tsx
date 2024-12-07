@@ -1,5 +1,6 @@
 'use client';
 
+import { CircularProgress } from '@mui/material';
 import useTranslation from 'next-translate/useTranslation';
 import React, { FormEvent, useState } from 'react';
 
@@ -7,15 +8,18 @@ interface LoginFormProps {
 	onSubmit: (data: { login: string; password: string }) => void;
 	onShowRegistration: () => void;
 	hasError: boolean;
+	setLoading: (loading: boolean) => void;
+	loading: boolean;
 }
 
-const LoginForm = ({ onSubmit, onShowRegistration, hasError }: LoginFormProps) => {
+const LoginForm = ({ onSubmit, onShowRegistration, hasError, setLoading, loading }: LoginFormProps) => {
 	const { t } = useTranslation("common");
 	const [login, setLogin] = useState('');
 	const [password, setPassword] = useState('');
 
 	const handleSubmit = (event: FormEvent) => {
 		event.preventDefault();
+		setLoading(true);
 		onSubmit({ login, password });
 	};
 
@@ -54,7 +58,7 @@ const LoginForm = ({ onSubmit, onShowRegistration, hasError }: LoginFormProps) =
 					type="submit"
 					className="w-full bg-orange-500 text-white py-2 px-4 rounded-md hover:bg-orange-600 transition-colors"
 				>
-					{t('pages.login.login-form.login')}
+					{loading ? <CircularProgress color="inherit" size={20} /> : t('pages.login.login-form.login')}
 				</button>
 				<button
 					type="button"

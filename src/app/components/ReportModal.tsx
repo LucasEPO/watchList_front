@@ -246,7 +246,7 @@ const ReportModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handleRef
                         sx={{
                             ...textFieldStyles,
                             '& .MuiInputLabel-root': {
-                                fontSize: '0.85rem',
+                                fontSize: !!formData.preventionAction ? '1rem' : '0.85rem',
                             },
                             '& .MuiInputLabel-root.Mui-focused': {
                                 fontSize: '1rem',
@@ -266,7 +266,7 @@ const ReportModal: React.FC<RelatorioModalProps> = ({ isOpen, onClose, handleRef
                         sx={{
                             ...textFieldStyles,
                             '& .MuiInputLabel-root': {
-                                fontSize: '0.85rem',
+                                fontSize: !!formData.riskAction ? '1rem' : '0.85rem',
                             },
                             '& .MuiInputLabel-root.Mui-focused': {
                                 fontSize: '1rem',
